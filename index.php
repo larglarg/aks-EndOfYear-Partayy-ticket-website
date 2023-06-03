@@ -46,9 +46,25 @@ if ($count_free >= 1) {
     <h1>Ticket-Reservierung</h1>
     <h3>Es sind noch <?php echo $count_free ?> Plätze frei</h3>
     <form action="reservieren.php" method="post">
+      
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+     
+      <label for="Vorname">Vorname:</label>
+      <input type="text" id="Vorname" name="Vorname" required>
+
+      <label for="schule">Deine eigene schule:</label>
+      <input type="text" id="schule" name="schule" required>
+
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email" required>
+
+
       <label for="tickets">Anzahl der Tickets (1-<?php echo $max_ausleihe ?>):</label>
       <input type="number" id="tickets" name="tickets" min="1" max="<?php echo $max_ausleihe ?>" required>
-      
+     
+      <label for="start">Geburztag:</label>
+<input type="date"  id="geburztag" name="geburztag" required>
       <div class="agb">
         <input type="checkbox" id="agb" name="agb" required>
         <label for="agb">Ich stimme den AGB zu. <a href="agb.html" target="_blank">AGB anzeigen</a></label>
