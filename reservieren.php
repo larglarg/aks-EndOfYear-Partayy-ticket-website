@@ -2,13 +2,13 @@
 <html lang="de">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Reservierung</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
+    <title>Reservierung</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-<?php
+    <?php
 function CheckAll($agb_check, $einwilligung_bild_ton){
   $flag = true;
   
@@ -25,59 +25,62 @@ function CheckAll($agb_check, $einwilligung_bild_ton){
   return $flag;
 }
 
-function CleanEverything($conn, $id_list, $number_of_tickets){
+function CleanEverything($conn, $IdListMain, $number_of_tickets){
+  #echo "CleanEverything wird<br>";
   for ($i = 1; $i <= $number_of_tickets; $i++) {
     if($i==1){
-      $id = $id_list['besteller'];
+      $id = $IdListMain['besteller'];
 
     }
     if($i==2){
-      $id = $id_list['gast1'];
+      $id = $IdListMain['gast1'];
 
     }
     if($i==3){
-      $id = $id_list['gast2'];
+      $id = $IdListMain['gast2'];
 
     }
     if($i==4){
-      $id = $id_list['gast3'];
+      $id = $IdListMain['gast3'];
 
     }
     if($i==5){
-      $id = $id_list['gast1'];
+      $id = $IdListMain['gast1'];
 
     }
     $sql = "UPDATE main SET status = 'frei' WHERE id = ".$id.";";
     $conn->query($sql);
   }
 }
-function TestIdForActivOrders($conn, $id){
-  $sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = '".$id."' OR gast1_id = '".$id."' OR gast2_id = '".$id."' OR gast3_id = '".$id."' OR gast4_id = '".$id."';";
+function TestIdForActivOrders($conn, $idBestellerMenschen, $IdListMain, $number_of_tickets){
+  #echo "TestIdForActivOrders wird<br>";
+  $sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = '".$idBestellerMenschen."' OR gast1_id = '".$idBestellerMenschen."' OR gast2_id = '".$idBestellerMenschen."' OR gast3_id = '".$idBestellerMenschen."' OR gast4_id = '".$idBestellerMenschen."';";
   $result = $conn->query($sql);
   while($row = $result->fetch(PDO::FETCH_ASSOC)) {
       if ($row['status'] == "reserviert") {
-          CleanEverything($conn, $id_list, $number_of_tickets);
+          CleanEverything($conn, $IdListMain, $number_of_tickets);
           echo "Weiterleiten auf bestellung läuft schon Seite";
-          return;
+          exit();
       }
       if ($row['status'] == "verkauft") {
-        CleanEverything($conn, $id_list, $number_of_tickets);
+        CleanEverything($conn, $IdListMain, $number_of_tickets);
         echo "Weiterleiten auf karten wurden schon gekauft Seite";
-        return;
+        exit();
     }
 }
 
 
 }
-function CheckExcistingBookings($conn, $id_list, $number_of_tickets, $name, $vorname, $gb_datum, $email){
+function CheckExcistingBookings($conn, $IdListMain, $idBestellerMenschen, $number_of_tickets, $name, $vorname, $gb_datum, $email){
 #test ob mail mit nicht abgebrochener bestellung verbunden
-
+#echo "CheckExcistingBookings wird<br>";
 $sql = "SELECT id, email FROM menschen WHERE email = '".$email."';";
 $result = $conn->query($sql);
 if ($result->rowCount() != 0) {
     
   while($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    TestIdForActivOrders($conn, $row['id']);
+    $idBestellerMenschen = $row['id'];
+    TestIdForActivOrders($conn, $idBestellerMenschen, $IdListMain, $number_of_tickets);
   }
   }
     #testen ob mensch sonst exestiert -> besttellungstest und TODO->doppelte mesnchen
@@ -88,23 +91,45 @@ if ($result->rowCount() != 0) {
     if ($result->rowCount() != 0) {
       while($row = $result->fetch(PDO::FETCH_ASSOC)) {
     
-      TestIdForActivOrders($conn, $row['id']);
+      TestIdForActivOrders($conn, $IdListMain['besteller'], $IdListMain, $number_of_tickets);
       }
     }
+}
+
+function BegleitungForm($i){
+  ?>
+    <label for="name<?php echo $i?>">Name:</label>
+    <input type="text" id="name<?php echo $i?>" name="name<?php echo $i?>" required>
+
+    <label for="Vorname<?php echo $i?>">Vorname:</label>
+    <input type="text" id="Vorname<?php echo $i?>" name="Vorname<?php echo $i?>" required>
+
+    <label for="schule<?php echo $i?>">Schule:</label>
+    <input type="text" id="schule<?php echo $i?>" name="schule<?php echo $i?>" required>
+
+    <label for="email<?php echo $i?>">E-mail:</label>
+    <input type="email" id="email<?php echo $i?>" name="email<?php echo $i?>" required>
+
+    <label for="start<?php echo $i?>">Geburztag:</label>
+    <input type="date" id="geburztag<?php echo $i?>" name="geburztag<?php echo $i?>" required>
+
+    <?php
+
 }
 
 $servername = "localhost";
 $username = "root";
 $password = "";
-$id_besteller;
+$idBestellerMenschen = 0;
 $id;
-$id_list = array(
+$IdListMain = array(
   "besteller" => 0,
   "gast1" => 0,
   "gast2" => 0,
   "gast3" => 0,
   "gast4" => 0,
 );
+
 $number_of_tickets = $_POST['tickets'];
 $agb_check = $_POST['agb'];
 $einwilligung_bild_ton = $_POST['einwilligung'];
@@ -119,7 +144,7 @@ try {
   $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
-  echo "Connection failed: " . $e->getMessage();
+  #echo "Connection failed: " . $e->getMessage();
 }
 
 if(CheckAll($agb_check, $einwilligung_bild_ton)){
@@ -136,19 +161,19 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
       $sql = "UPDATE main SET status = 'reserviert' WHERE id = ".$id.";";
       $conn->query($sql);
       if($i == 1){
-        $id_list['besteller'] = $id;
+        $IdListMain['besteller'] = $id;
       }
       if($i == 2){
-        $id_list['gast1'] = $id;
+        $IdListMain['gast1'] = $id;
       }
       if($i == 3){
-        $id_list['gast2'] = $id;
+        $IdListMain['gast2'] = $id;
       }
       if($i == 4){
-        $id_list['gast3'] = $id;
+        $IdListMain['gast3'] = $id;
       }
       if($i == 5){
-        $id_list['gast4'] = $id;
+        $IdListMain['gast4'] = $id;
       }
       if($i == $number_of_tickets){
         break;
@@ -160,32 +185,27 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
     echo "error!!!!!!!";
   }
 
-  CheckExcistingBookings($conn, $id_list, $number_of_tickets, $name, $vorname, $gb_datum, $email);
+  CheckExcistingBookings($conn, $IdListMain, $idBestellerMenschen, $number_of_tickets, $name, $vorname, $gb_datum, $email);
 
   #exestiert schule ? wenn ja get id
 
   $sql = "SELECT id, name FROM schulen WHERE name = '".$schule."';";
-  echo $sql;
   $result = $conn->query($sql);
   if ($result->rowCount() > 0) {
     while($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $schul_id = $row["id"];
-      echo "<br>".$schul_id;
       break;
     }
   } else {
 
   #wenn nein neue schule aufnehmen
-    echo $schule;
     $sql = "INSERT INTO schulen (name) VALUES ('".$schule."');";
     $conn->query($sql);
 
     $sql = "SELECT id, name FROM schulen WHERE name = '".$schule."';";
     $result = $conn->query($sql);
     $row = $result->fetch(PDO::FETCH_ASSOC);
-    print $row["id"];
     $schul_id = $row["id"];
-    echo "<br>".$schul_id;
   }
   
   
@@ -195,41 +215,71 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
   $result = $conn->query($sql);
   if($result->rowCount() > 0){
   $row = $result->fetch(PDO::FETCH_ASSOC);
-  $id_list['besteller'] = $row["id"];
-  echo $id_list['besteller']."wurde als id gesetzt";
+  $idBestellerMenschen = $row["id"];
   
   }else{
     #erstellen von menschen in db
     $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, ticketstatus, email) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', 'reserviert', '".$email."');";
-    echo $sql;
     $conn->query($sql);
+    $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."' AND email = '".$email."'";
+    $result = $conn->query($sql);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $idBestellerMenschen = $row["id"];
   }
+  
 
-  $sql = "UPDATE main SET mensch_id = ".$id_list['besteller']." WHERE id = ".$id.";";
+
+  $sql = "UPDATE main SET mensch_id = ".$idBestellerMenschen." WHERE id = ".$IdListMain['besteller'].";";
   $conn->query($sql);
-
+  
+  #erstellen von bestellung in db
+  $sql = "INSERT INTO bestellung (Anzahl_tickets, besteller_id, status) VALUES ('".$number_of_tickets."', '".$idBestellerMenschen."','reserviert');";
+  $conn->query($sql);
 } else {
   echo "Es wurden nicht alle Hacken gesetzt!";
 }
 ?>
+    <div class="container">
+        <h1>Infos für die weiteren Tickets</h1>
+        <p>
+        <h3>Jeder person muss sein eigene Mail bestätigen und den AGBs zustimmen.</h3>
+        Dennoch können alle Tickets von Dir abgeholt und bezahlt werden.
 
-<div class="popup-container" id="popupContainer" style="display: none;">
-  <div class="popup">
-    <span class="close-btn" onclick="closePopup()">X</span>
-    <h2>Willkommen im Popup!</h2>
-    <p>Dies ist ein Beispiel für ein Popup-Fenster.</p>
-  </div>
-</div>
 
-<script>
-  function openPopup() {
-    document.getElementById("popupContainer").style.display = "flex";
+        </p>
+        <form action="reservieren.php" method="post">
+            <div class="EinzeldAbholen">
+                <input type="checkbox" id="EinzeldAbholen" name="EinzeldAbholen" required>
+                <label for="EinzeldAbholen">Alle tickets sollen einzelnd abgeholt werden.</label>
+            </div>
+            <?php 
+  for($i = 1; $i < $number_of_tickets; $i++){
+    switch($i){
+      case 1:
+        echo "<h3>Erste begleitung</h3>";
+        BegleitungForm($i);
+        break;
+      case 2:
+        echo "<h3>Zweite begleitung</h3>";
+        BegleitungForm($i);
+        break;
+      case 3:
+        echo "<h3>Dritte begleitung</h3>";
+        BegleitungForm($i);
+        break;
+      case 4:
+        echo "<h3>Vierte begleitung</h3>";
+        BegleitungForm($i);
+        break;
+    }
+
   }
+?>
+            <br>
+            <input type="submit" value="Reservieren">
+        </form>
+    </div>
 
-  function closePopup() {
-    document.getElementById("popupContainer").style.display = "none";
-  }
-</script>
 
 </body>
 
