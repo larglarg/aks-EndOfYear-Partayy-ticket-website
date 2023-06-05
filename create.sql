@@ -23,6 +23,7 @@ CREATE TABLE `schulen` (
 -- Tabelle 'bestellung' erstellen
 CREATE TABLE `bestellung` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `Anzahl_tickets` INT,
   `besteller_id` INT,
   `gast1_id` INT,
   `gast2_id` INT,
