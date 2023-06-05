@@ -129,7 +129,7 @@ $IdListMain = array(
   "gast3" => 0,
   "gast4" => 0,
 );
-
+$bestellungsId;
 $number_of_tickets = $_POST['tickets'];
 $agb_check = $_POST['agb'];
 $einwilligung_bild_ton = $_POST['einwilligung'];
@@ -148,6 +148,8 @@ try {
 }
 
 if(CheckAll($agb_check, $einwilligung_bild_ton)){
+
+  
   $i = 0;
   
   #bekomen von freien ids von main 
@@ -238,6 +240,36 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
 } else {
   echo "Es wurden nicht alle Hacken gesetzt!";
 }
+
+if($number_of_tickets == 1){
+  #weiterleiten auf mail seite
+  $sql = "SELECT id, besteller_id, status From bestellung Where besteller_id = ".$idBestellerMenschen." AND status = 'reserviert'";
+  $result = $conn->query($sql);
+  if($result->rowCount() == 1){
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $bestellungsId = $row["id"];
+    }else{
+      echo "<h1>Es gab einen unbekanntenfehle bitte wennden sie sich an Support@mail.de</h1>";
+      exit();
+    }
+  $params = array(
+    'name' => $name,
+    'vorname' => $vorname,
+    'schule' => $schule,
+    'gb_datum' => $gb_datum,
+    'email' => $email,
+    'bestellungs_id' => $bestellungsId,
+    'whitchEmail' => 1
+  );
+
+  echo "<p color='red'>Nicht vergessen zu checken ob bestellung mit namen besteht!!!</p>";
+  $sendmailURL = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/sendmail.php?' . http_build_query($params);
+  echo "<p color='red'>Nicht vergessen zu einen return einzubauen!!!</p>";
+  $response = file_get_contents($sendmailURL);
+  echo $response;
+  exit();
+}
+
 ?>
     <div class="container">
         <h1>Infos für die weiteren Tickets</h1>
