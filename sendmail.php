@@ -18,7 +18,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
+
 require 'includes/PHPMailer/src/Exception.php';
+
 require 'includes/PHPMailer/src/PHPMailer.php';
 require 'includes/PHPMailer/src/SMTP.php';
 
@@ -73,6 +75,7 @@ switch($whitchEmail) {
             'schule' => $schule,
             'gb_datum' => $gb_datum,
             'email' => $email,
+
         );
         // Bestätigungsmail für AGB und Bildrechte und dass die Karten bestellt werden dürfen.
         $subject = "Reservierung für die AKS EndOfYear Partayy Tickets";
@@ -85,6 +88,7 @@ switch($whitchEmail) {
             // Servereinstellungen
             $mail->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
             $mail->isSMTP(); // Sende über SMTP
+
             $mail->Host = $smtpHost; // Setze den SMTP-Server für den Versand
             $mail->SMTPAuth = true; // Aktiviere SMTP-Authentifizierung
             $mail->Username = $mailusername; // SMTP-Benutzername
@@ -95,6 +99,8 @@ switch($whitchEmail) {
             $mail->Encoding  = 'base64';
             // Empfänger
             $mail->setFrom('lars.handwerker@web.de', 'AKS Karlsruhe');
+
+
             $mail->addAddress($email, $name.", ".$vorname); // Füge einen Empfänger hinzu
 
             // Inhalt

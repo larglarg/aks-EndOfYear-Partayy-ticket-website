@@ -25,32 +25,46 @@ $currentDateTime = date("Y-m-d h:i:sa");;
     <meta charset="UTF-8">
     <title>Ticketreservierung</title>
     <style>
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-    }
+/* Style.css */
 
-    h1 {
-        color: #63007F;
-    }
+/* Global Styles */
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
 
-    ul {
-        margin-top: 10px;
-    }
+body {
+	color: #50545C;
+	font-weight: 400;
+	line-height: 1.55;
+	letter-spacing: 0px;
+	background-color: #e0e0e0;
+}
 
-    li {
-        margin-top: 5px;
-    }
+a,
+a:hover {
+	color: #f7ad00;
+	text-decoration: none;
+}
 
-    button {
-        margin-top: 20px;
-        background-color: #63007F;
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-    }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 500;
+	line-height: 1.1;
+	letter-spacing: 0px;
+}
 
     a {
         color: #63007F;
@@ -89,8 +103,9 @@ $currentDateTime = date("Y-m-d h:i:sa");;
     .link-button:active {
         color: red;
     }
-    </style>
 
+    </style>
+<link rel="icon" href="./images.png">
 </head>
 
 <body>
