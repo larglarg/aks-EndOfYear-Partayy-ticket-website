@@ -30,7 +30,7 @@ CREATE TABLE `bestellung` (
   `gast3_id` INT,
   `gast4_id` INT,
   `status` ENUM('reserviert', 'gekauft', 'abgelaufen', 'storno'),
-  `wann_erserciert` DATETIME,
+  `wann_erstellt` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `einzeld_oder_zusammen` TINYINT(1)
 );
 
