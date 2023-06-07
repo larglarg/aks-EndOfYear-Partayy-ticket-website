@@ -1,10 +1,3 @@
-<?php
-$name = $_GET['name'];
-$vorname = $_GET['vorname'];
-$schule = $_GET['schule'];
-$gb_datum = $_GET['gb_datum'];
-?>
-
 <!DOCTYPE html>
 <html>
 
@@ -12,50 +5,196 @@ $gb_datum = $_GET['gb_datum'];
     <meta charset="UTF-8">
     <title>Ticketreservierung</title>
     <style>
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-    }
+/* Style.css */
 
-    h1 {
-        color: #63007F;
-    }
+/* Global Styles */
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
 
-    ul {
-        margin-top: 10px;
-    }
+body {
+	color: #50545C;
+	font-weight: 400;
+	line-height: 1.55;
+	letter-spacing: 0px;
+	background-color: #e0e0e0;
+}
 
-    li {
-        margin-top: 5px;
-    }
+a,
+a:hover {
+	color: #f7ad00;
+	text-decoration: none;
+}
 
-    button {
-        margin-top: 20px;
-        background-color: #63007F;
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-    }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 500;
+	line-height: 1.1;
+	letter-spacing: 0px;
+}
 
-    a {
-        color: #63007F;
-        display: inline-block;
-        margin-top: 10px;
-    }
-    
-    .instagram-icon {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        background-image: url('./ig-logo-bw.png'); /* Pfad zum Instagram-Logo */
-        background-size: cover;
-        margin-right: 5px;
-        vertical-align: middle;
-    }
+h1 {
+	color: #63007f;
+}
+
+h2 {
+	color: #63007f;
+}
+
+h3.widget-title,
+.entry-content h3.widget-title {
+	color: #63007f;
+	font-size: 22px;
+	margin-bottom: 10px;
+}
+
+/* Header
+.site-header {
+	background: url("cropped-Beitrag_2.jpg") no-repeat center top;
+	background-attachment: fixed;
+	background-size: cover;
+}
+ */
+.site-title a {
+	font-size: 18px;
+	color: #f9f9f9;
+}
+
+.site-description {
+	color: #f9f9f9;
+}
+
+/* Navigation */
+.main-navigation li {
+	font-size: 16px;
+}
+
+/* Logo */
+.site-branding {
+	padding: 225px 0;
+}
+
+@media only screen and (max-width: 1024px) {
+	.site-branding {
+		padding: 100px 0;
+	}
+}
+
+.site-logo,
+.woocommerce .site-logo,
+.woocommerce-page .site-logo {
+	max-width: 200px;
+}
+
+/* Colors */
+.entry-meta a:hover,
+.entry-title a:hover,
+.widget-area a:hover,
+.social-navigation li a:hover,
+a,
+.featured-article-content .entry-title span {
+	color: #63007f;
+}
+
+.read-more,
+.nav-previous:hover,
+.nav-next:hover,
+button,
+.button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+	background-color: #63007f;
+}
+
+.entry-thumb:after {
+	background-color: rgba(99, 0, 127, 0.4);
+}
+
+/* WooCommerce */
+.woocommerce ul.products li.product .button {
+	background-color: #63007f;
+}
+
+.woocommerce ul.products li.product h2.woocommerce-loop-product__title:hover {
+	color: #63007f;
+}
+
+.woocommerce ul.products li.product-category h2.woocommerce-loop-category__title:hover {
+	color: #63007f;
+}
+
+.woocommerce ul.products li.product-category h2.woocommerce-loop-category__title:hover .count {
+	color: #63007f;
+}
+
+.woocommerce div.product form.cart button.button {
+	background-color: #63007f;
+}
+
+.woocommerce #reviews #comments ol.commentlist li div.star-rating {
+	color: #63007f;
+}
+
+.woocommerce #review_form #respond .form-submit input[type="submit"] {
+	background-color: #63007f;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li.active {
+	color: #63007f;
+}
+
+.single-product h2.related_products_title {
+	color: #63007f;
+}
+
+.woocommerce-cart header.entry-header h1.entry-title {
+	color: #63007f;
+}
+
+.woocommerce-cart input.button {
+	background-color: #63007f;
+}
+
+.woocommerce-checkout input.button {
+	background-color: #63007f;
+}
+
+.woocommerce-account header.entry-header h1.entry-title {
+	color: #63007f;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul li.is-active {
+	color: #63007f;
+}
+
+
+.instagram-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('./ig-logo-bw.png'); /* Pfad zum Instagram-Logo */
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-right: 5px;
+  vertical-align: middle;
+}
     </style>
-
+<link rel="icon" href="./images.png">
 </head>
 
 <body>
