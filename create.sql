@@ -10,7 +10,8 @@ CREATE TABLE `menschen` (
   `gb_datum` DATE,
   `schule_id` INT,
   `ticketstatus` ENUM('reserviert', 'verkauft', 'verfallen', 'gecancelt'),
-  `email` VARCHAR(100)
+  `email` VARCHAR(100),
+  `hash` VARCHAR(1000)
 );
 
 -- Tabelle 'schulen' erstellen
@@ -31,7 +32,8 @@ CREATE TABLE `bestellung` (
   `gast4_id` INT,
   `status` ENUM('reserviert', 'gekauft', 'abgelaufen', 'storno'),
   `wann_erstellt` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `einzeld_oder_zusammen` TINYINT(1)
+  `einzeld_oder_zusammen` TINYINT(1),
+  `hash` VARCHAR(1000)
 );
 
 -- Tabelle 'main' erstellen

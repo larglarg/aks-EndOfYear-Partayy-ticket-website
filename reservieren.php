@@ -122,6 +122,7 @@ $username = "root";
 $password = "";
 $idBestellerMenschen = 0;
 $id;
+$hash;
 $IdListMain = array(
   "besteller" => 0,
   "gast1" => 0,
@@ -220,8 +221,10 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
   $idBestellerMenschen = $row["id"];
   
   }else{
+    # creat hash vor person
+    $hash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$idBestellerMenschen, false);
     #erstellen von menschen in db
-    $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, ticketstatus, email) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', 'reserviert', '".$email."');";
+    $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, ticketstatus, email, hash) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', 'reserviert', '".$email."','".$hash."');";
     $conn->query($sql);
     $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."' AND email = '".$email."'";
     $result = $conn->query($sql);
@@ -239,9 +242,18 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
   $conn->query($sql);
 } else {
   echo "Es wurden nicht alle Hacken gesetzt!";
+  exit();
 }
 
+
 if($number_of_tickets == 1){
+  # wenn es nur eine mail gibt wird der hash mit $name.$vorname.$schule.$gb_datum.$email.$row['wann_erstellt'] erstellt unter verwendung von sha3-512
+  $sql = "SELECT id, wann_erstellt, status From bestellung Where id = ".$id." AND status = 'reserviert'";
+  $result = $conn->query($sql);
+  $row = $result->fetch(PDO::FETCH_ASSOC);
+  $hash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$row['wann_erstellt'], false);
+  $sql = "UPDATE bestellung SET hash = '".$hash."' WHERE besteller_id = ".$idBestellerMenschen.";";
+  $conn->query($sql);
   #weiterleiten auf mail seite
   $sql = "SELECT id, besteller_id, status From bestellung Where besteller_id = ".$idBestellerMenschen." AND status = 'reserviert'";
   $result = $conn->query($sql);
@@ -252,6 +264,7 @@ if($number_of_tickets == 1){
       echo "<h1>Es gab einen unbekanntenfehle bitte wennden sie sich an Support@mail.de</h1>";
       exit();
     }
+
   $params = array(
     'name' => $name,
     'vorname' => $vorname,
