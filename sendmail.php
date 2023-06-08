@@ -1,17 +1,13 @@
 <?php
 // Retrieve the passed variables from the URL parameters
-$name = $_GET['name'];
 $vorname = $_GET['vorname'];
-$schule = $_GET['schule'];
-$gb_datum = $_GET['gb_datum'];
-$email = $_GET['email'];
-$bestellungsId = $_GET['bestellungs_id'];
 $whitchEmail = $_GET['whitchEmail'];
+$email = $_GET['email'];
 $menschId;
 $message;
-$servername = "localhost";
-$username = "root";
-$password = "";
+include 'sqlAuth.php';
+$personHash = $_GET['personHash'];
+$bestellungsHash = $_GET['bestellungsHash'];
 include 'mailAuth.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -39,54 +35,51 @@ try {
     exit();
 }
 
-$sql = "SELECT id, email FROM menschen WHERE email = :email";
+$sql = "SELECT id, hash FROM menschen WHERE hash = :personHash";
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':email', $email);
+$stmt->bindParam(':personHash', $personHash);
 $stmt->execute();
 
 if($stmt->rowCount() != 1) {
-    echo "1 eins";
+    echo "Der mensch exestiert nicht";
     exit();
 }
 
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $menschId = $row['id'];
 
-$sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE id = :bestellungsId AND (besteller_id = :menschId OR gast1_id = :menschId OR gast2_id = :menschId OR gast3_id = :menschId OR gast4_id = :menschId)";
+$sql = "SELECT hash, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE hash = :bestellungsHash AND (besteller_id = :menschId OR gast1_id = :menschId OR gast2_id = :menschId OR gast3_id = :menschId OR gast4_id = :menschId)";
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':bestellungsId', $bestellungsId);
+$stmt->bindParam(':bestellungsHash', $bestellungsHash);
 $stmt->bindParam(':menschId', $menschId);
 $stmt->execute();
 
 if($stmt->rowCount() != 1) {
-    echo "1 zwei";
+    echo "Die bestellung exestiert nicht";
     exit();
 }
 
-echo "JETZT DÜRFTE DIE MAIL GESENDET WERDEN XD";
+#echo "JETZT DÜRFTE DIE MAIL GESENDET WERDEN XD";
 
 $to = $email;
 
 switch($whitchEmail) {
     case 1:
         $params = array(
-            'name' => $name,
             'vorname' => $vorname,
-            'schule' => $schule,
-            'gb_datum' => $gb_datum,
-            'email' => $email,
-
+            'personHash' => $personHash,
+            'bestellungsHash' => $bestellungsHash,
         );
         // Bestätigungsmail für AGB und Bildrechte und dass die Karten bestellt werden dürfen.
         $subject = "Reservierung für die AKS EndOfYear Partayy Tickets";
         $getmesage = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/ReservierungfürdieAKSEndOfYreaarPartaayTicket.php?' . http_build_query($params);
         $from = "lars.handwerker@web.de";
         $message = file_get_contents($getmesage);
-        echo $message;
+        #cho $message;
 
         try {
             // Servereinstellungen
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
+            #$mail->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
             $mail->isSMTP(); // Sende über SMTP
 
             $mail->Host = $smtpHost; // Setze den SMTP-Server für den Versand
@@ -98,21 +91,34 @@ switch($whitchEmail) {
             $mail->CharSet   = 'UTF-8';
             $mail->Encoding  = 'base64';
             // Empfänger
-            $mail->setFrom('lars.handwerker@web.de', 'AKS Karlsruhe');
+            $mail->setFrom($from, 'AKS Karlsruhe');
 
 
-            $mail->addAddress($email, $name.", ".$vorname); // Füge einen Empfänger hinzu
+            $mail->addAddress($email); // Füge einen Empfänger hinzu
 
             // Inhalt
             $mail->isHTML(true); // Setze das E-Mail-Format auf HTML
             $mail->Subject = 'Reservierung Karten AKS EndOfYear Partayy';
             $mail->Body = $message;
             $mail->send();
-            echo 'Die Nachricht wurde gesendet';
+           # echo 'Die Nachricht wurde gesendet';
         } catch (Exception $e) {
-            echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mail->ErrorInfo}";
+            #echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mail->ErrorInfo}";
         }
+        ?>
 
+<body>
+    <div class="container">
+        <h1>Die E-Mail wurde erfolgreich verschickt.</h1>
+        <p>Nun musst du, und ggf. deine begleitung die daten bestätiegen und den agbs zustimmen. <br>
+        Danach erhälst du eine weiter mail mit einem qr codr zum abholen der Karten</p>
+        <!-- Hier können Sie den gewünschten Inhalt einfügen, der die erfolgreiche Versendung bestätigt. -->
+    </div>
+</body>
+
+
+
+<?php
         break;
     case 2:
         echo "<h3>Zweite Begleitung</h3>";

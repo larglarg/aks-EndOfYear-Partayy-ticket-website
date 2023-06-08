@@ -117,12 +117,11 @@ function BegleitungForm($i){
 
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
+include 'sqlAuth.php';
 $idBestellerMenschen = 0;
 $id;
-$hash;
+$bestellungsHash;
+$personHash;
 $IdListMain = array(
   "besteller" => 0,
   "gast1" => 0,
@@ -222,9 +221,9 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
   
   }else{
     # creat hash vor person
-    $hash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$idBestellerMenschen, false);
+    $personHash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$idBestellerMenschen, false);
     #erstellen von menschen in db
-    $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, ticketstatus, email, hash) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', 'reserviert', '".$email."','".$hash."');";
+    $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, ticketstatus, email, hash) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', 'reserviert', '".$email."','".$personHash."');";
     $conn->query($sql);
     $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."' AND email = '".$email."'";
     $result = $conn->query($sql);
@@ -251,8 +250,8 @@ if($number_of_tickets == 1){
   $sql = "SELECT id, wann_erstellt, status From bestellung Where id = ".$id." AND status = 'reserviert'";
   $result = $conn->query($sql);
   $row = $result->fetch(PDO::FETCH_ASSOC);
-  $hash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$row['wann_erstellt'], false);
-  $sql = "UPDATE bestellung SET hash = '".$hash."' WHERE besteller_id = ".$idBestellerMenschen.";";
+  $bestellungsHash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$row['wann_erstellt'], false);
+  $sql = "UPDATE bestellung SET hash = '".$bestellungsHash."' WHERE besteller_id = ".$idBestellerMenschen.";";
   $conn->query($sql);
   #weiterleiten auf mail seite
   $sql = "SELECT id, besteller_id, status From bestellung Where besteller_id = ".$idBestellerMenschen." AND status = 'reserviert'";
@@ -266,18 +265,13 @@ if($number_of_tickets == 1){
     }
 
   $params = array(
-    'name' => $name,
     'vorname' => $vorname,
-    'schule' => $schule,
-    'gb_datum' => $gb_datum,
+    'whitchEmail' => 1,
+    'personHash' => $personHash,
+    'bestellungsHash' => $bestellungsHash,
     'email' => $email,
-    'bestellungs_id' => $bestellungsId,
-    'whitchEmail' => 1
   );
-
-  echo "<p color='red'>Nicht vergessen zu checken ob bestellung mit namen besteht!!!</p>";
   $sendmailURL = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/sendmail.php?' . http_build_query($params);
-  echo "<p color='red'>Nicht vergessen zu einen return einzubauen!!!</p>";
   $response = file_get_contents($sendmailURL);
   echo $response;
   exit();

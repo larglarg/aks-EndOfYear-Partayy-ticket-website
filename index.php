@@ -8,9 +8,7 @@
 </head>
 
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
+include 'sqlAuth.php';
 $max_ausleihe = 5;
 
 try {

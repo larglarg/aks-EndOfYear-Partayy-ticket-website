@@ -1,21 +1,7 @@
 <?php
-
-
-
-
-$name = $_GET['name'];
 $vorname = $_GET['vorname'];
-$schule = $_GET['schule'];
-$gb_datum = $_GET['gb_datum'];
-$email = $_GET['email'];
-
-
-function infos(){
-    echo $name.$vorname.$schule.$gb_datum;
-    return;
-}
-$currentDateTime = date("Y-m-d h:i:sa");;
-
+$personHash = $_GET['personHash'];
+$bestellungsHash = $_GET['bestellungsHash'];
 ?>
 
 <!DOCTYPE html>
@@ -25,52 +11,50 @@ $currentDateTime = date("Y-m-d h:i:sa");;
     <meta charset="UTF-8">
     <title>Ticketreservierung</title>
     <style>
-/* Style.css */
+        .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
 
-/* Global Styles */
-img.wp-smiley,
-img.emoji {
-	display: inline !important;
-	border: none !important;
-	box-shadow: none !important;
-	height: 1em !important;
-	width: 1em !important;
-	margin: 0 0.07em !important;
-	vertical-align: -0.1em !important;
-	background: none !important;
-	padding: 0 !important;
-}
+  h1 {
+    color: #63007F;
+  }
 
-body {
-	color: #50545C;
-	font-weight: 400;
-	line-height: 1.55;
-	letter-spacing: 0px;
-	background-color: #e0e0e0;
-}
+  label {
+    display: block;
+    margin-top: 10px;
+  }
 
-a,
-a:hover {
-	color: #f7ad00;
-	text-decoration: none;
-}
+  input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: 1px solid #E0E0E0;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-weight: 500;
-	line-height: 1.1;
-	letter-spacing: 0px;
-}
+  .agb,
+  .EinzeldAbholen,
+  .einwilligung {
+    margin-top: 10px;
+  }
 
-    a {
-        color: #63007F;
-        display: inline-block;
-        margin-top: 10px;
-    }
+  input[type="checkbox"] {
+    margin-right: 5px;
+  }
+
+  input[type="submit"] {
+    margin-top: 20px;
+    background-color: #63007F;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+
+  a {
+    color: #63007F;
+  }
 
     .instagram-icon {
         display: inline-block;
@@ -82,6 +66,17 @@ h6 {
         margin-right: 5px;
         vertical-align: middle;
     }
+    .button-submit {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #63007F;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
 
     .link-button {
         background: none;
@@ -103,42 +98,30 @@ h6 {
     .link-button:active {
         color: red;
     }
-
     </style>
-<link rel="icon" href="./images.png">
+    <link rel="icon" href="https://bestellungstest.larglarg.com/aks-EndOfYear-Partayy-ticket-website-test/images.png"> <!-- Ersetze "https://example.com" durch die tatsächliche URL deines Servers -->
 </head>
 
 <body>
-    <div class="container">
-        <h1>Hallo <?php echo $vorname;?>,</h1>
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #63007F;">Hallo <?php echo $vorname; ?>,</h1>
 
-        <p>Es wurde ein Ticket für Ihre E-Mail-Adresse reserviert. Bitte überprüfen Sie die folgenden Daten:</p>
+        <p>Es wurde ein Ticket für deine E-Mail-Adresse reserviert.</p>
         <form action="http://localhost/aks-EndOfYear-Partayy-ticket-website/besteatigen.php" method="post">
-            <ul>
-                <li>Name: <?php echo $name; ?></li>
-                <li>Vorname: <?php echo $vorname; ?></li>
-                <li>Schule: <?php echo $schule; ?></li>
-                <li>Geburtsdatum: <?php echo $gb_datum; ?></li>
-            </ul>
-            <p>Zum bestätiegen oder bearbeiten der daten, sowie dem bestätiegen der reservierung auf weiter klicken.</p>
-
-
-            <?php echo infos(); ?>
-            <button type="button" type="submit">Weiter</button>
+            <input type="hidden" name="personhash" value="<?php echo $personHash; ?>">
+            <input type="hidden" name="bestellungsHash" value="<?php echo $bestellungsHash; ?>">
+            <input style="justify-content: center; display: flex; align-items: center; margin-top: 20px; background-color: #63007F; color: #FFFFFF; border: none; padding: 10px 20px; cursor: pointer;" type="submit" value="Bestätigen">
         </form>
         <form action="http://localhost/aks-EndOfYear-Partayy-ticket-website/storno.php" method="post">
-
-            <input type="hidden" name="date" value="<?php echo $currentDateTime; ?>">
-            <input type="hidden" name="email" value="<?php echo $email; ?>">
-            
-            <p>Falls Sie die Reservierung stornieren wollen, drücken Sie bitte <button  type="submit" class="link-button">hier</button>. <br></p>
+            <input type="hidden" name="personhash" value="<?php echo $personHash; ?>">
+            <input type="hidden" name="bestellungsHash" value="<?php echo $bestellungsHash; ?>">
+            <p>
+                Falls Sie die Reservierung stornieren wollen, drücken Sie bitte <button style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;" type="submit">hier</button>.
+                <br>
+            </p>
         </form>
-
-        <p>Bei Fragen oder Problemen schreiben Sie uns gerne bei <a href="https://www.instagram.com/aks.karlsruhe/"><span class="instagram-icon"></span>Instagram</a> oder
-            schreiben Sie uns eine E-Mail.</p>
-
+        <p>Bei Fragen oder Problemen schreib uns doch gerne bei <a href="https://www.instagram.com/aks.karlsruhe/" style="color: #63007F;"><span style="display: inline-block; width: 16px; height: 16px; background-image: url('https://example.com/ig-logo-bw.png'); background-size: cover; margin-right: 5px; vertical-align: middle;"></span>Instagram</a> oder per E-Mail.</p>
         <p>Vielen Dank!</p>
-
     </div>
 </body>
 
