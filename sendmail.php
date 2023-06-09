@@ -35,27 +35,27 @@ try {
     exit();
 }
 
-$sql = "SELECT id, hash FROM menschen WHERE hash = :personHash";
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':personHash', $personHash);
-$stmt->execute();
+$sql = "SELECT id, hash FROM menschen WHERE hash = '".$personHash."';";
+$result = $conn->query($sql);
 
-if($stmt->rowCount() != 1) {
+if($result->rowCount() != 1) {
     echo "Der mensch exestiert nicht";
     exit();
 }
 
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$row = $result->fetch(PDO::FETCH_ASSOC);
 $menschId = $row['id'];
 
-$sql = "SELECT hash, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE hash = :bestellungsHash AND (besteller_id = :menschId OR gast1_id = :menschId OR gast2_id = :menschId OR gast3_id = :menschId OR gast4_id = :menschId)";
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':bestellungsHash', $bestellungsHash);
-$stmt->bindParam(':menschId', $menschId);
-$stmt->execute();
+$sql = "SELECT hash, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE hash = '".$bestellungsHash."' AND (besteller_id = ".$menschId." OR gast1_id = ".$menschId." OR gast2_id = ".$menschId." OR gast3_id = ".$menschId." OR gast4_id = ".$menschId.")";
+$result = $conn->query($sql);
 
-if($stmt->rowCount() != 1) {
-    echo "Die bestellung exestiert nicht";
+
+if($result->rowCount() == 0) {
+    echo "Die bestellung exestiert nicht null";
+    exit();
+}
+if($result->rowCount() > 1) {
+    echo "Die bestellung exestiert nicht mehr als eins";
     exit();
 }
 
@@ -111,7 +111,7 @@ switch($whitchEmail) {
     <div class="container">
         <h1>Die E-Mail wurde erfolgreich verschickt.</h1>
         <p>Nun musst du, und ggf. deine begleitung die daten bestätiegen und den agbs zustimmen. <br>
-        Danach erhälst du eine weiter mail mit einem qr codr zum abholen der Karten</p>
+            Danach erhälst du eine weiter mail mit einem qr codr zum abholen der Karten</p>
         <!-- Hier können Sie den gewünschten Inhalt einfügen, der die erfolgreiche Versendung bestätigt. -->
     </div>
 </body>

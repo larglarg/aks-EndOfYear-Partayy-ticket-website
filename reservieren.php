@@ -116,8 +116,25 @@ function BegleitungForm($i){
     <?php
 
 }
+function nichtStonier($conn, $number_of_tickets, $bestellungsId){
+    $sql = "UPDATE bestellung SET besteller_stoniert = false, ";
+    if($number_of_tickets > 1){
+      $sql = $sql."gast1_stoniert = false";
+    }
+    if($number_of_tickets > 2){
+      $sql = $sql.", gast1_stoniert = false";
+    }
+    if($number_of_tickets > 3){
+      $sql = $sql.", gast1_stoniert = false";
+    }
+    if($number_of_tickets > 4){
+      $sql = $sql.", gast1_stoniert = false";
+    }
+    $sql = $sql.";";
+}
 
 include 'sqlAuth.php';
+include 'hashSeed.php';
 $idBestellerMenschen = 0;
 $id;
 $bestellungsHash;
@@ -144,7 +161,7 @@ try {
   $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
-  #echo "Connection failed: " . $e->getMessage();
+  echo "Connection failed: " . $e->getMessage();
 }
 
 if(CheckAll($agb_check, $einwilligung_bild_ton)){
@@ -212,24 +229,34 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
   
   
   
-  #reservierer mit abgebochenen bestellungen -> nicht neu anlegen
-  $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."' AND email = '".$email."'";
+  #reservierer mit abgebochenen bestellungen -> nicht neu anlegen 
+  $sql = "SELECT id, name, vorname, gb_datum, hash FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."';";
   $result = $conn->query($sql);
   if($result->rowCount() > 0){
   $row = $result->fetch(PDO::FETCH_ASSOC);
   $idBestellerMenschen = $row["id"];
-  
+  $personHash  = $row["hash"];
+
   }else{
-    # creat hash vor person
-    $personHash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$idBestellerMenschen, false);
-    #erstellen von menschen in db
-    $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, ticketstatus, email, hash) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', 'reserviert', '".$email."','".$personHash."');";
-    $conn->query($sql);
-    $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."' AND email = '".$email."'";
-    $result = $conn->query($sql);
-    $row = $result->fetch(PDO::FETCH_ASSOC);
-    $idBestellerMenschen = $row["id"];
-  }
+    $sql2 = "SELECT id, email, hash FROM bestellung WHERE email = '".$email."'";
+    $result2 = $conn->query($sql);
+    if($result2->rowCount() > 0){
+      $row = $result2->fetch(PDO::FETCH_ASSOC);
+      $idBestellerMenschen = $row["id"];
+      $personHash =  $row["hash"];
+
+    }else{
+      # creat hash vor person
+      $personHash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$idBestellerMenschen.$hashseed, false);
+      #erstellen von menschen in db
+      $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, email, hash) VALUES ('".$name."','".$vorname."','".$gb_datum."','".$schul_id."', '".$email."','".$personHash."');";
+      $conn->query($sql);
+      $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '".$name."' AND vorname = '".$vorname."' AND gb_datum = '".$gb_datum."' AND email = '".$email."'";
+      $result = $conn->query($sql);
+      $row = $result->fetch(PDO::FETCH_ASSOC);
+      $idBestellerMenschen = $row["id"];
+    }
+}
   
 
 
@@ -239,18 +266,42 @@ if(CheckAll($agb_check, $einwilligung_bild_ton)){
   #erstellen von bestellung in db
   $sql = "INSERT INTO bestellung (Anzahl_tickets, besteller_id, status) VALUES ('".$number_of_tickets."', '".$idBestellerMenschen."','reserviert');";
   $conn->query($sql);
+  $sql = "SELECT id,besteller_id, status FROM bestellung WHERE besteller_id = ".$idBestellerMenschen." AND status = 'reserviert';";
+  $result = $conn->query($sql);
+  $row = $result->fetch(PDO::FETCH_ASSOC);
+  $bestellungsId = $row['id'];
 } else {
   echo "Es wurden nicht alle Hacken gesetzt!";
   exit();
 }
-
+nichtStonier($conn, $number_of_tickets, $bestellungsId);
 
 if($number_of_tickets == 1){
+  
   # wenn es nur eine mail gibt wird der hash mit $name.$vorname.$schule.$gb_datum.$email.$row['wann_erstellt'] erstellt unter verwendung von sha3-512
   $sql = "SELECT id, wann_erstellt, status From bestellung Where id = ".$id." AND status = 'reserviert'";
   $result = $conn->query($sql);
   $row = $result->fetch(PDO::FETCH_ASSOC);
-  $bestellungsHash = hash('sha3-512',$name.$vorname.$schule.$gb_datum.$email.$row['wann_erstellt'], false);
+  #convert classic date to just a nummber
+  
+  $firstsplit = array();
+  $firstsplit = explode(" ", $row['wann_erstellt']);
+  $dateAsNumberString = "";
+  $wannErstelleHash = "";
+  foreach(explode("-", $firstsplit[0] ) as $i){
+    $dateAsNumberString = $dateAsNumberString.$i;
+  }
+  foreach(explode(":", $firstsplit[1] ) as $i){
+    $dateAsNumberString = $dateAsNumberString.$i;
+  }
+  $Nummberarray = array();
+  $Nummberarray = str_split($dateAsNumberString);
+  foreach($Nummberarray as $i){
+    $i = chr($i);
+    $wannErstelleHash = $wannErstelleHash.$i;
+  }
+  $key = $wannErstelleHash.$name.$vorname.$schule.$gb_datum.$email.$hashseed;
+  $bestellungsHash = hash('sha3-512',$key , false);
   $sql = "UPDATE bestellung SET hash = '".$bestellungsHash."' WHERE besteller_id = ".$idBestellerMenschen.";";
   $conn->query($sql);
   #weiterleiten auf mail seite

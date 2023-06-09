@@ -9,7 +9,6 @@ CREATE TABLE `menschen` (
   `vorname` VARCHAR(100),
   `gb_datum` DATE,
   `schule_id` INT,
-  `ticketstatus` ENUM('reserviert', 'verkauft', 'verfallen', 'gecancelt'),
   `email` VARCHAR(100),
   `hash` VARCHAR(1000)
 );
@@ -30,16 +29,22 @@ CREATE TABLE `bestellung` (
   `gast2_id` INT,
   `gast3_id` INT,
   `gast4_id` INT,
-  `status` ENUM('reserviert', 'gekauft', 'abgelaufen', 'storno'),
+  `status` ENUM('reserviert', 'besteatigt', 'gekauft', 'abgelaufen', 'storno'),
   `wann_erstellt` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `einzeld_oder_zusammen` TINYINT(1),
-  `hash` VARCHAR(1000)
+  `hash` VARCHAR(1000),
+  `besteller_storniert` BOOLEAN,
+  `gast1_storniert` BOOLEAN,
+  `gast2_storniert` BOOLEAN,
+  `gast3_storniert` BOOLEAN,
+  `gast4_storniert` BOOLEAN
 );
+
 
 -- Tabelle 'main' erstellen
 CREATE TABLE `main` (
   `id` INT PRIMARY KEY,
-  `status` ENUM('frei', 'reserviert', 'verkauft'),
+  `status` ENUM('frei', 'reserviert', 'verkauft', 'besteatigt'),
   `mensch_id` INT,
   `reservierung_id` INT
 );
