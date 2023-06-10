@@ -61,7 +61,7 @@ if ($count_free >= 1) {
             <label for="tickets">Anzahl der Tickets (1-<?php echo $max_ausleihe ?>):</label>
             <input type="number" id="tickets" name="tickets" min="1" max="<?php echo $max_ausleihe ?>" required>
 
-            <label for="start">Geburztag:</label>
+            <label for="date">Geburztag:</label>
             <input type="date" id="geburztag" name="geburztag" required>
             <div class="agb">
                 <input type="checkbox" id="agb" name="agb" required>
