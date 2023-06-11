@@ -115,7 +115,7 @@ $bestellungsHash = $_GET['bestellungsHash'];
             <input
                 style="justify-content: center; display: flex; align-items: center; margin-top: 20px; background-color: #63007F; color: #FFFFFF; border: none; padding: 10px 20px; cursor: pointer;"
                 type="submit" value="Bestätigen">
-                <p>hier kommt test <a href="http://localhost/aks-EndOfYear-Partayy-ticket-website/besteatigen.php?personhash=<?php echo urlencode($personHash); ?>&bestellungsHash=<?php echo urlencode($bestellungsHash); ?>" style="color: blue; text-decoration: underline; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;">hier</a>.</p>
+                <p>hier kommt test <a href="http://localhost/aks-EndOfYear-Partayy-ticket-website/profData.php?personhash=<?php echo urlencode($personHash); ?>&bestellungsHash=<?php echo urlencode($bestellungsHash); ?>" style="color: blue; text-decoration: underline; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;">hier</a>.</p>
 
 
         </form>

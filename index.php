@@ -74,6 +74,10 @@ if ($count_free >= 1) {
                     des STJA und den Social Media Kanälen des AKS veröffentlicht werden dürfen, solange mindestens 10
                     weitere Personen darauf zu erkennen sind.</label>
             </div>
+            <div class="EinzeldAbholen">
+                <input type="checkbox" id="EinzeldAbholen" name="EinzeldAbholen" required>
+                <label for="EinzeldAbholen">Jeder soll seine karten selbst abholen.</label>
+            </div>
 
             <input type="submit" value="Reservieren">
         </form>

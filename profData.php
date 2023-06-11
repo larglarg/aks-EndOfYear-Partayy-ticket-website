@@ -13,20 +13,20 @@ $sql = "SELECT id FROM menschen WHERE hash = '".$personHash."';";
 $result = $conn->query($sql);
 $row = $result->fetch(PDO::FETCH_ASSOC);
 $menschID = $row['id'];
-$sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, besteller_storniert, gast1_stroniert, gast2_stroniert, gast3_stroniert, gast4_stroniert Where hash = '".$bestellungsHash."';";
+$sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert FROM bestellung Where hash = '".$bestellungsHash."';";
 $result = $conn->query($sql);
 $row = $result->fetch(PDO::FETCH_ASSOC);
 $flag = 0;
 #testen ob die person ihre bestellung nicht schon stoniert hat
 if($menschID == $row['besteller_id'] && !$row['besteller_storniert']){
     $flag = 1;
-}elseif($menschID == $row['gast1_id'] && !$row['gast1_stroniert']){
+}elseif($menschID == $row['gast1_id'] && !$row['gast1_storniert']){
     $flag = 1;
-}elseif($menschID == $row['gast2_id'] && !$row['gast2_stroniert']){
+}elseif($menschID == $row['gast2_id'] && !$row['gast2_storniert']){
     $flag = 1;
-}elseif($menschID == $row['gast3_id'] && !$row['gast3_stroniert']){
+}elseif($menschID == $row['gast3_id'] && !$row['gast3_storniert']){
     $flag = 1;
-}elseif($menschID == $row['gast4_id'] && !$row['gast4_stroniert']){
+}elseif($menschID == $row['gast4_id'] && !$row['gast4_storniert']){
     $flag = 1;
 }else{
     echo "Die bestellung wurde stoniert!!!";
@@ -54,7 +54,7 @@ if($flag == 1){
 </head>
 
 <body>
-
+<div class="container">
     <h1>
         Hey, bitte Überprüfe bitte einmal diedaten:
     </h1>
@@ -75,12 +75,17 @@ if($flag == 1){
         <label for="date">Geburztag:</label>
         <input type="date" id="geburztag" name="geburztag" value="<?php echo $Menscharray['gb_datum'] ?>" required>
 
-        <input type="submit" value="Reservieren">
+        <div class="EinzeldAbholen">
+                <input type="checkbox" id="agb" name="EinzeldAbholen" value="<?php echo $Menscharray['EinzeldAbholen'] ?>" required>
+                <label for="EinzeldAbholen">Ich möchte meine karte selbst abholen!</a></label>
+        </div>
+        <br>
+        <input type="submit" value="Daten Bestätiegen!">
 
 
     </form>
 
-
+</div>
 </body>
 
 

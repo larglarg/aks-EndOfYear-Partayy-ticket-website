@@ -365,6 +365,10 @@ if($number_of_tickets == 1){
 
   }
 ?>
+            <div class="EinzeldAbholen">
+                <input type="checkbox" id="EinzeldAbholen" name="EinzeldAbholen" required>
+                <label for="EinzeldAbholen">Alle tickets sollen einzelnd abgeholt werden.</label>
+            </div>
             <br>
             <input type="submit" value="Reservieren">
         </form>
