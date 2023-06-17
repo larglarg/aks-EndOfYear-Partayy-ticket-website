@@ -61,26 +61,26 @@
     $sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = '" . $idBestellerMenschen . "' OR gast1_id = '" . $idBestellerMenschen . "' OR gast2_id = '" . $idBestellerMenschen . "' OR gast3_id = '" . $idBestellerMenschen . "' OR gast4_id = '" . $idBestellerMenschen . "';";
     $result = $conn->query($sql);
     $FirstTime = 1;
-    $status = array("reserviert","storno","besteatigt");
+    $status = array("reserviert", "storno", "besteatigt");
     print_r($status);
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-      foreach($status as $currentStatus){
-      echo "TestIdForActivOrders while loop<br>";
-      $msg= "es fehlt der standart fehler ";
-      if($isMail == 1 && $i == 1){
-        $msg = "Errorcode 409 Mail already taken.";
-        $FirstTime--;
-      }else{
-        $msg = "darf ich nicht sagen bruder xD";
-        if ($row['status'] == $currentStatus) {
-          CleanEverything($conn, $IdListMain, $number_of_tickets);
-          echo $msg;
-          exit();
+      foreach ($status as $currentStatus) {
+        echo "TestIdForActivOrders while loop<br>";
+        $msg = "es fehlt der standart fehler ";
+        if ($isMail == 1 && $i == 1) {
+          $msg = "Errorcode 409 Mail already taken.";
+          $FirstTime--;
+        } else {
+          $msg = "darf ich nicht sagen bruder xD";
+          if ($row['status'] == $currentStatus) {
+            CleanEverything($conn, $IdListMain, $number_of_tickets);
+            echo $msg;
+            exit();
+          }
         }
-      }
 
-      
-    }
+
+      }
     }
 
 
@@ -128,7 +128,8 @@
     <input type="email" id="email<?php echo $i ?>" name="email<?php echo $i ?>" required>
 
     <label for="start<?php echo $i ?>">Geburztag:</label>
-    <input type="date" id="geburztag<?php echo $i ?>" min="2007-01-01" max="2011-05-01" name="geburztag<?php echo $i ?>" required>
+    <input type="date" id="geburztag<?php echo $i ?>" min="2007-01-01" max="2011-05-01" name="geburztag<?php echo $i ?>"
+      required>
 
     <?php
 
@@ -150,7 +151,7 @@
     }
     $sql = $sql . ";";
   }
-
+  include 'Mensch.php';
   include 'sqlAuth.php';
   include 'hashSeed.php';
   $idBestellerMenschen = 0;
@@ -174,6 +175,15 @@
   $gb_datum = $_POST['geburztag'];
   $email = $_POST['email'];
   $schul_id = 0;
+  $params = array(
+    $name = $_POST['name'],
+    $vorname = $_POST['Vorname'],
+    $schule = $_POST['schule'],
+    $gb_datum = $_POST['geburztag'],
+    $email = $_POST['email'],
+  );
+  $besteller = new Mensch($params);
+
 
   try {
     $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
@@ -221,7 +231,15 @@
     } else {
       echo "error!!!!!!!";
     }
+    if($besteller->problemMitInfos($conn)){
+      if($besteller->doseUserExist()){
 
+      }
+
+
+    }
+    
+    $besteller->activeOrder($conn);
     CheckExcistingBookings($conn, $IdListMain, $idBestellerMenschen, $number_of_tickets, $name, $vorname, $gb_datum, $email);
 
     #exestiert schule ? wenn ja get id
@@ -244,7 +262,7 @@
       $row = $result->fetch(PDO::FETCH_ASSOC);
       $schul_id = $row["id"];
     }
-
+    $besteller->setHash(hash('sha3-512', $name . $vorname . $schule . $gb_datum . $email . $idBestellerMenschen . $hashseed, false));
 
 
     #reservierer mit abgebochenen bestellungen -> nicht neu anlegen 
@@ -256,6 +274,8 @@
       $personHash = $row["hash"];
 
     } else {
+      
+     #TODO Somthing is wrong here I can feel IT 
       $sql2 = "SELECT id, email, hash FROM bestellung WHERE email = '" . $email . "'";
       $result2 = $conn->query($sql);
       if ($result2->rowCount() > 0) {
@@ -264,15 +284,8 @@
         $personHash = $row["hash"];
 
       } else {
-        # creat hash vor person
-        $personHash = hash('sha3-512', $name . $vorname . $schule . $gb_datum . $email . $idBestellerMenschen . $hashseed, false);
         #erstellen von menschen in db
-        $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, email, hash) VALUES ('" . $name . "','" . $vorname . "','" . $gb_datum . "','" . $schul_id . "', '" . $email . "','" . $personHash . "');";
-        $conn->query($sql);
-        $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '" . $name . "' AND vorname = '" . $vorname . "' AND gb_datum = '" . $gb_datum . "' AND email = '" . $email . "'";
-        $result = $conn->query($sql);
-        $row = $result->fetch(PDO::FETCH_ASSOC);
-        $idBestellerMenschen = $row["id"];
+        $besteller->writeInDB($conn);
       }
     }
 

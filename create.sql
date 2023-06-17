@@ -10,6 +10,7 @@ CREATE TABLE `menschen` (
   `gb_datum` DATE,
   `schule_id` INT,
   `email` VARCHAR(100),
+  `email_verified` BOOLEAN DEFAULT FALSE,
   `hash` VARCHAR(1000)
 );
 
