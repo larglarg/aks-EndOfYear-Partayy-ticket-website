@@ -72,7 +72,7 @@ switch($whitchEmail) {
         );
         // Bestätigungsmail für AGB und Bildrechte und dass die Karten bestellt werden dürfen.
         $subject = "Reservierung für die AKS EndOfYear Partayy Tickets";
-        $getmesage = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/ReservierungfürdieAKSEndOfYreaarPartaayTicket.php?' . http_build_query($params);
+        $getmesage = '/ReservierungfürdieAKSEndOfYreaarPartaayTicket.php?' . http_build_query($params);
         $from = "lars.handwerker@web.de";
         $message = file_get_contents($getmesage);
         #cho $message;
