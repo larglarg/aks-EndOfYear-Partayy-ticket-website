@@ -10,8 +10,8 @@ class Mensch
     protected $id;
     public function __construct($params = array()) {
         $this->name = $params['name'];
-        $this->vorname = $params['Vorname'];
-        $this->gb_datum = $params['geburztag'];
+        $this->vorname = $params['vorname'];
+        $this->gb_datum = $params['gb_datum'];
         $this->email = $params['email'];
     }
     
@@ -39,54 +39,21 @@ class Mensch
         
         $mailExists = false;
         $restExists = false;
-        $isMail = 0;
-        $stmt = $conn->prepare("SELECT id, email FROM menschen WHERE email = ':email';");
+        $stmt = $conn->prepare("SELECT id, email FROM menschen WHERE email = :email AND email_verified = 1 ;");
         $stmt->bindParam(':email', $this->email);
         $stmt->execute();
         if ($stmt->rowCount() != 0) {
             $mailExists = true;
-            $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':localID' OR gast1_id = ':localID' OR gast2_id = ':localID' OR gast3_id = ':localID' OR gast4_id = ':localID';");   
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $stmt->bindParam(':localID', $row['id']);
-                $stmt->execute();
-                if ($stmt->rowCount() != 0) {
-                    $status = array("reserviert", "storno", "besteatigt");
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        foreach ($status as $currentStatus) {
-                            if ($row['status'] == $currentStatus) {
-                                return 4;
-                            }
-                        }
-                    }
-                }
-
-
-            }
         }
-        $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum FROM menschen WHERE name = ':name' AND vorname = ':vorname' AND gb_datum = ':gb_datum';");
+
+        $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum FROM menschen WHERE name = :name AND vorname = :vorname AND gb_datum = :gb_datum AND email_verified = 1 ;");
         $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':vorname ', $this->vorname);
+        $stmt->bindParam(':vorname', $this->vorname);
         $stmt->bindParam(':gb_datum', $this->gb_datum);
         $stmt->execute();
         if ($stmt->rowCount() != 0) {
             $restExists = true;
-            $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':localID' OR gast1_id = ':localID' OR gast2_id = ':localID' OR gast3_id = ':localID' OR gast4_id = ':localID';");
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $stmt->bindParam(':localID', $row['id']);
-                $stmt->execute();
-                if ($stmt->rowCount() != 0) {
-                    $status = array("reserviert", "storno", "besteatigt");
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        foreach ($status as $currentStatus) {
-                            if ($row['status'] == $currentStatus) {
-                                return 4;
-                            }
-                        }
-                    }
-                }
-
-
-            }
+            
         }
 
         if($mailExists && $restExists){
@@ -101,7 +68,7 @@ class Mensch
 
     }
     public function doseUserExist($conn){
-        $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = ':name' AND vorname = ':vorname' AND gb_datum = ':gb_datum' AND email = ':email';");
+        $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = :name AND vorname = :vorname AND gb_datum = :gb_datum AND email = :email;");
         $stmt->bindParam(':vorname', $this->vorname);
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':gb_datum', $this->gb_datum);
@@ -118,25 +85,41 @@ class Mensch
 
 
     }
-    public function activeOrder($conn)
-    {
-        $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':id' OR gast1_id = ':id' OR gast2_id = ':id' OR gast3_id = ':id' OR gast4_id = ':id';");
-        $stmt->bindParam(':id',$this->id);
-        $stmt->execute();
+    #$welcher -> 1 mail; 2 name vorname gb datum; 3 mit Mensch ID 
+    public function activeOrder($conn, $welcher){
+        if($welcher == 1){
+            $stmt = $conn->prepare("SELECT id, email FROM menschen WHERE email = :email AND email_verified = 1 ;");
+            $stmt->bindParam(':email', $this->email);
+        }elseif($welcher == 2){
+            $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum FROM menschen WHERE name = :name AND vorname = :vorname AND gb_datum = :gb_datum;");
+            $stmt->bindParam(':vorname', $this->vorname);
+            $stmt->bindParam(':name', $this->name);
+            $stmt->bindParam(':gb_datum', $this->gb_datum);
+        }elseif($welcher == 3){
+            $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE (status != 'frei' OR status != '') AND (besteller_id = :id OR gast1_id = :id OR gast2_id = :id OR gast3_id = :id OR gast4_id = :id);");
+            $stmt->bindParam(':id',$this->id);
 
-        if ($stmt->rowCount() != 0) {
-            $status = array("reserviert", "storno", "besteatigt");
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                foreach ($status as $currentStatus) {
-                    if ($row['status'] == $currentStatus) {
-                        return 1;
-                    }
-                }
+        }
+        
+        $stmt->execute();
+        $stmtCheckForActiv = $conn->prepare("SELECT id, mensch_id, status FROM Main WHERE mensch_id = :id AND stats != 'frei;'");
+        if($welcher == 3){
+            $stmtCheckForActiv = $conn->prepare("SELECT id, mensch_id, reservierung_id status FROM Main WHERE mensch_id = :mensch_id AND reservierung_id = :reservierung_id AND stats != 'frei;'");
+        }
+        foreach($stmt->fetch(PDO::FETCH_ASSOC) as $row){
+            if($welcher == 3){
+                $stmtCheckForActiv->bindParam(':reservierung_id', $row['id']);
+                $stmtCheckForActiv->bindParam('mensch_id', $this->id);
+            }else{
+           
+            $stmtCheckForActiv->bindParam(':mensch_id', $row['id']);
+        }
+            $stmtCheckForActiv->execute();
+            if($stmtCheckForActiv->rowCount() != 0){
+                return true;
             }
         }
-
-        return 0;
-        #return 0-> keine bestellung 1 -> es läuft eine bestellung
+        return false;
     }
     public function generateHash($hashseed){
         $this->hash = hash('sha3-512', $this->name . $this->vorname .  $this->gb_datum . $this->email . $hashseed, false);
@@ -153,7 +136,38 @@ class Mensch
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $this->id = $row["id"];
     }
-    
+    /*$stmtCheck = $conn->prepare("SELECT id, besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':localID' OR gast1_id = ':localID' OR gast2_id = ':localID' OR gast3_id = ':localID' OR gast4_id = ':localID';");
+            $stmtMain = $conn->prepare("SELECT Status, mensch_id, reservierung_id WHERE Status != 'frei' AND reservierung_id = :reservierungs_id AND mensch_id = :localID;");
+            foreach($stmt->fetch(PDO::FETCH_ASSOC) as $row){
+                $stmtCheck->bindParam(':localID', $this->id);
+                $stmtCheck->execute();
+                $rowCheck = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+                $stmtMain->bindParam(':localID', $this->id);
+                $stmtMain->bindParam(':reservierung_id', $rowCheck['id']);
+                if($stmtMain->rowCount() != 0){
+                    $mailExists ;
+                }
+
+            }
+            */
+            /*$stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':localID' OR gast1_id = ':localID' OR gast2_id = ':localID' OR gast3_id = ':localID' OR gast4_id = ':localID';");
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $stmt->bindParam(':localID', $row['id']);
+                $stmt->execute();
+                if ($stmt->rowCount() != 0) {
+                    $status = array("reserviert", "storno", "besteatigt");
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        foreach ($status as $currentStatus) {
+                            if ($row['status'] == $currentStatus) {
+                                return 4;
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            */
 
 
 }

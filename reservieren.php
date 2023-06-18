@@ -176,11 +176,11 @@
   $email = $_POST['email'];
   $schul_id = 0;
   $params = array(
-    $name = $_POST['name'],
-    $vorname = $_POST['Vorname'],
-    $schule = $_POST['schule'],
-    $gb_datum = $_POST['geburztag'],
-    $email = $_POST['email'],
+    'name' => $_POST['name'],
+    'vorname' => $_POST['vorname'],
+    'schule' => $_POST['name'],
+    'gb_datum' => $_POST['gb_datum'],
+    'email' => $_POST['email'],
   );
   $besteller = new Mensch($params);
 
@@ -230,15 +230,7 @@
     } else {
       echo "error!!!!!!!";
     }
-    if($besteller->problemMitInfos($conn)){
-      if($besteller->doseUserExist()){
-
-      }
-
-
-    }
     
-    $besteller->activeOrder($conn);
     CheckExcistingBookings($conn, $IdListMain, $idBestellerMenschen, $number_of_tickets, $name, $vorname, $gb_datum, $email);
 
     #exestiert schule ? wenn ja get id

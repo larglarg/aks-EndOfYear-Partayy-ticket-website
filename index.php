@@ -45,13 +45,13 @@ if ($count_free >= 1) {
       <h3>Es sind noch
         <?php echo $count_free ?> Plätze frei
       </h3>
-      <form action="reservieren.php" method="post">
+      <form action="reservierenneu.php" method="post">
 
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="Vorname">Vorname:</label>
-        <input type="text" id="Vorname" name="Vorname" required>
+        <label for="vorname">Vorname:</label>
+        <input type="text" id="vorname" name="vorname" required>
 
         <label for="schule">Deine eigene schule:</label>
         <input type="text" id="schule" name="schule" required>
@@ -65,8 +65,8 @@ if ($count_free >= 1) {
         </label>
         <input type="number" id="tickets" name="tickets" min="1" max="<?php echo $max_ausleihe ?>" required>
 
-        <label for="date">Geburztag:</label>
-        <input type="date" id="geburztag" name="geburztag" min="2007-01-01" max="2011-05-01" required>
+        <label for="gb_datum">Geburztag:</label>
+        <input type="date" id="gb_datum" name="gb_datum" min="2007-01-01" max="2011-05-01" required>
 
 
         <div class="agb">
