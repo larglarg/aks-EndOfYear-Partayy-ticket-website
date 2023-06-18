@@ -184,7 +184,6 @@
   );
   $besteller = new Mensch($params);
 
-
   try {
     $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -262,9 +261,8 @@
       $row = $result->fetch(PDO::FETCH_ASSOC);
       $schul_id = $row["id"];
     }
-    $besteller->setHash(hash('sha3-512', $name . $vorname . $schule . $gb_datum . $email . $idBestellerMenschen . $hashseed, false));
-
-
+    $besteller->generateHash($hashseed);
+    #TODO ->Get schulID einbauen
     #reservierer mit abgebochenen bestellungen -> nicht neu anlegen 
     $sql = "SELECT id, name, vorname, gb_datum, hash FROM menschen WHERE name = '" . $name . "' AND vorname = '" . $vorname . "' AND gb_datum = '" . $gb_datum . "';";
     $result = $conn->query($sql);

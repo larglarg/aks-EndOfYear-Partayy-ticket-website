@@ -9,100 +9,12 @@ class Mensch
     protected $schul_id;
     protected $id;
     public function __construct($params = array()) {
-        foreach ($params as $key => $value) {
-            $this->{$key} = $value;
-        }
+        $this->name = $params['name'];
+        $this->vorname = $params['Vorname'];
+        $this->gb_datum = $params['geburztag'];
+        $this->email = $params['email'];
     }
     
-
-    /**
-     * Getter && setter 
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set the value of name
-     *
-     * @return  self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of vorname
-     */
-    public function getVorname()
-    {
-        return $this->vorname;
-    }
-
-    /**
-     * Set the value of vorname
-     *
-     * @return  self
-     */
-    public function setVorname($vorname)
-    {
-        $this->vorname = $vorname;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of gb_datum
-     */
-    public function getGb_datum()
-    {
-        return $this->gb_datum;
-    }
-
-    /**
-     * Set the value of gb_datum
-     *
-     * @return  self
-     */
-    public function setGb_datum($gb_datum)
-    {
-        $this->gb_datum = $gb_datum;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of email
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set the value of email
-     *
-     * @return  self
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of hash
-     */
-    public function getHash()
-    {
-        return $this->hash;
-    }
-
     /**
      * Set the value of hash
      *
@@ -115,39 +27,6 @@ class Mensch
         return $this;
     }
 
-    /**
-     * Get the value of schul_id
-     */
-    public function getSchul_id()
-    {
-        return $this->schul_id;
-    }
-
-    /**
-     * Set the value of schul_id
-     *
-     * @return  self
-     */
-
-    /**
-     * Get the value of id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set the value of id
-     *
-     * @return  self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
     public function setSchul_id($schul_id)
     {
         $this->schul_id = $schul_id;
@@ -161,17 +40,18 @@ class Mensch
         $mailExists = false;
         $restExists = false;
         $isMail = 0;
-        $sql = "SELECT id, email FROM menschen WHERE email = '" . $this->email . " AND ';";
-        $result = $conn->query($sql);
-        if ($result->rowCount() != 0) {
+        $stmt = $conn->prepare("SELECT id, email FROM menschen WHERE email = ':email';");
+        $stmt->bindParam(':email', $this->email);
+        $stmt->execute();
+        if ($stmt->rowCount() != 0) {
             $mailExists = true;
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $localID = $row['id'];
-                $sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = '" . $localID . "' OR gast1_id = '" . $localID . "' OR gast2_id = '" . $localID . "' OR gast3_id = '" . $localID . "' OR gast4_id = '" . $localID . "';";
-                $result = $conn->query($sql);
-                if ($result->rowCount() != 0) {
+            $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':localID' OR gast1_id = ':localID' OR gast2_id = ':localID' OR gast3_id = ':localID' OR gast4_id = ':localID';");   
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $stmt->bindParam(':localID', $row['id']);
+                $stmt->execute();
+                if ($stmt->rowCount() != 0) {
                     $status = array("reserviert", "storno", "besteatigt");
-                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         foreach ($status as $currentStatus) {
                             if ($row['status'] == $currentStatus) {
                                 return 4;
@@ -183,17 +63,20 @@ class Mensch
 
             }
         }
-        $sql = "SELECT id, name, vorname, gb_datum FROM menschen WHERE name = '" . $this->name . "' AND vorname = '" . $this->vorname . "' AND gb_datum = '" . $this->gb_datum . "'";
-        $result = $conn->query($sql);
-        if ($result->rowCount() != 0) {
+        $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum FROM menschen WHERE name = ':name' AND vorname = ':vorname' AND gb_datum = ':gb_datum';");
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':vorname ', $this->vorname);
+        $stmt->bindParam(':gb_datum', $this->gb_datum);
+        $stmt->execute();
+        if ($stmt->rowCount() != 0) {
             $restExists = true;
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $localID = $row['id'];
-                $sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = '" . $localID . "' OR gast1_id = '" . $localID . "' OR gast2_id = '" . $localID . "' OR gast3_id = '" . $localID . "' OR gast4_id = '" . $localID . "';";
-                $result = $conn->query($sql);
-                if ($result->rowCount() != 0) {
+            $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':localID' OR gast1_id = ':localID' OR gast2_id = ':localID' OR gast3_id = ':localID' OR gast4_id = ':localID';");
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $stmt->bindParam(':localID', $row['id']);
+                $stmt->execute();
+                if ($stmt->rowCount() != 0) {
                     $status = array("reserviert", "storno", "besteatigt");
-                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         foreach ($status as $currentStatus) {
                             if ($row['status'] == $currentStatus) {
                                 return 4;
@@ -218,20 +101,32 @@ class Mensch
 
     }
     public function doseUserExist($conn){
-        $sql = "SELECT id, name, vorname, gb_datum FROM menschen WHERE name = '" . $this->name . "' AND vorname = '" . $this->vorname . "' AND gb_datum = '" . $this->gb_datum . "' AND email = '". $this->email ."';";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = ':name' AND vorname = ':vorname' AND gb_datum = ':gb_datum' AND email = ':email';");
+        $stmt->bindParam(':vorname', $this->vorname);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':gb_datum', $this->gb_datum);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->execute();
+        if($stmt->rowCount() == 0){
+            return false;
+        }elseif($stmt->rowCount() == 1){
+            return true;
+        }else{
+            exit();
+        }
 
 
 
     }
     public function activeOrder($conn)
     {
-        $sql = "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = '" . $this->id . "' OR gast1_id = '" . $this->id . "' OR gast2_id = '" . $this->id . "' OR gast3_id = '" . $this->id . "' OR gast4_id = '" . $this->id . "';";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, status FROM bestellung WHERE besteller_id = ':id' OR gast1_id = ':id' OR gast2_id = ':id' OR gast3_id = ':id' OR gast4_id = ':id';");
+        $stmt->bindParam(':id',$this->id);
+        $stmt->execute();
 
-        if ($result->rowCount() != 0) {
+        if ($stmt->rowCount() != 0) {
             $status = array("reserviert", "storno", "besteatigt");
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 foreach ($status as $currentStatus) {
                     if ($row['status'] == $currentStatus) {
                         return 1;
@@ -243,17 +138,22 @@ class Mensch
         return 0;
         #return 0-> keine bestellung 1 -> es läuft eine bestellung
     }
-
-    public function writeInDB($conn){
-                #erstellen von menschen in db
-                $sql = "INSERT INTO menschen (name, vorname, gb_datum, schule_id, email, hash) VALUES ('" . $this->name . "','" . $this->vorname . "','" . $this->gb_datum . "','" . $this->schul_id . "', '" . $this->email . "','" . $this->personHash . "');";
-                $conn->query($sql);
-                $sql = "SELECT id, name, vorname, gb_datum, email FROM menschen WHERE name = '" . $this->name . "' AND vorname = '" . $this->vorname . "' AND gb_datum = '" . $this->gb_datum . "' AND email = '" . $this->email . "'";
-                $result = $conn->query($sql);
-                $row = $result->fetch(PDO::FETCH_ASSOC);
-                $this->id = $row["id"];
-
+    public function generateHash($hashseed){
+        $this->hash = hash('sha3-512', $this->name . $this->vorname .  $this->gb_datum . $this->email . $hashseed, false);
     }
+    public function writeInDB($conn) {
+        $stmt = $conn->prepare("INSERT INTO menschen (name, vorname, gb_datum, schule_id, email, hash) VALUES (:name, :vorname, :gb_datum, :schul_id, :email, :hash)");
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':vorname', $this->vorname);
+        $stmt->bindParam(':gb_datum', $this->gb_datum);
+        $stmt->bindParam(':schul_id', $this->schul_id);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':hash', $this->hash);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->id = $row["id"];
+    }
+    
 
 
 }
