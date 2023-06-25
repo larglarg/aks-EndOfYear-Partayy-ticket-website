@@ -1,5 +1,4 @@
 <?php
-$vorname = $_GET['vorname'];
 $personHash = $_GET['personHash'];
 $bestellungsHash = $_GET['bestellungsHash'];
 ?>
@@ -106,7 +105,7 @@ $bestellungsHash = $_GET['bestellungsHash'];
 
 <body>
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h1 style="color: #63007F;">Hallo <?php echo $vorname; ?>,</h1>
+        <h1 style="color: #63007F;">Hallo,</h1>
 
         <p>Es wurde ein Ticket für deine E-Mail-Adresse reserviert.</p>
         <form action="http://localhost/aks-EndOfYear-Partayy-ticket-website/besteatigen.php" method="post">
@@ -115,14 +114,14 @@ $bestellungsHash = $_GET['bestellungsHash'];
             <input
                 style="justify-content: center; display: flex; align-items: center; margin-top: 20px; background-color: #63007F; color: #FFFFFF; border: none; padding: 10px 20px; cursor: pointer;"
                 type="submit" value="Bestätigen">
-                <p>hier kommt test <a href="http://localhost/aks-EndOfYear-Partayy-ticket-website/profData.php?personhash=<?php echo urlencode($personHash); ?>&bestellungsHash=<?php echo urlencode($bestellungsHash); ?>" style="color: blue; text-decoration: underline; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;">hier</a>.</p>
+                <p>hier kommt test <a href="http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profData.php?personhash=<?php echo urlencode($personHash); ?>&bestellungsHash=<?php echo urlencode($bestellungsHash); ?>" style="color: blue; text-decoration: underline; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;">hier</a>.</p>
 
 
         </form>
         <form action="http://localhost/aks-EndOfYear-Partayy-ticket-website/storno.php" method="post">
             <input type="hidden" name="personhash" value="<?php echo $personHash; ?>">
             <input type="hidden" name="bestellungsHash" value="<?php echo $bestellungsHash; ?>">
-            <p>Falls Sie die Reservierung stornieren wollen, drücken Sie bitte <a href="http://localhost/aks-EndOfYear-Partayy-ticket-website/storno.php?personhash=<?php echo urlencode($personHash); ?>&bestellungsHash=<?php echo urlencode($bestellungsHash); ?>" style="color: blue; text-decoration: underline; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;">hier</a>.</p>
+            <p>Falls Sie die Reservierung stornieren wollen, drücken Sie bitte <a href="http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/storno.php?personhash=<?php echo urlencode($personHash); ?>&bestellungsHash=<?php echo urlencode($bestellungsHash); ?>" style="color: blue; text-decoration: underline; font-size: 1em; font-family: serif; margin-left: 5px; padding: 0px 0px;">hier</a>.</p>
 
 
         </form>

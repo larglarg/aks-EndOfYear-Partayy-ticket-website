@@ -24,6 +24,7 @@ function setBestellungsHashSingel($conn, $besteller, $reservierung_id ){
     $stmt->bindParam(':bestellungs_hash', $Bestlleungs_hash, PDO::PARAM_STR);
     $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
     $stmt->execute();
+    return $Bestlleungs_hash;
 }
 
 
@@ -115,7 +116,6 @@ foreach ($rows as $row) {
 
 }
 $problemStatus = $besteller->problemMitInfos($conn);
-echo $problemStatus;
 /*if($problemStatus == 3){
     if($besteller->doseUserExist($conn)){
 
@@ -131,9 +131,7 @@ if ($problemStatus == 3) {
     }
 }
 if ($problemStatus != 0) {
-    echo "problemstatus != 0";
     if ($besteller->activeOrder($conn, $problemStatus)) {
-        echo "problemstatus != 0";
         echo "Es läuft bereitz eine Bestellung mit diesen infos und einer Bestätiegten e-mail addresse";
         CleanEverything($conn, $IdListMain, $number_of_tickets, $reservierung_id);
         exit();
@@ -150,6 +148,7 @@ if ($problemStatus != 0) {
 if ($stmt->rowCount() == $number_of_tickets) {
 
     echo "genug tickets stehen bereit";
+    $besteller->generateHash($hashseed);
     $besteller->writeMenschInDB($conn);
     $besteller->writeIDInMainDB($conn);
     $besteller->idInBestellung($conn, 0);
@@ -186,8 +185,13 @@ if ($stmt->rowCount() > 0) {
 }
 
 if($number_of_tickets == 1){
-    setBestellungsHashSingel($conn, $besteller, $reservierung_id);
-    
+    echo "is in if send mail";
+    $bestellungsHash= setBestellungsHashSingel($conn, $besteller, $reservierung_id);
+    echo "is in if send mail";
+    $zielUrl = './sendmail.php';
+    $zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($besteller->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash) . '&whitchEmail=' . urlencode(1);
+    header('Location: ' . $zielUrlMitParametern);
+    exit();
 }
 
 ?>

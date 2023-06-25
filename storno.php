@@ -1,50 +1,62 @@
 <?php
 
-function stornieren($whitch, $conn, $bestellungsHash){
-    $sql = "UPDATE bestellung SET ".$whitch." = true WHERE hash = '".$bestellungsHash."';";
-    $conn->query($sql);
-
+function stornieren($whitch, $conn, $bestellungsHash, $stonierer){
+    $stmt = $conn->prepare("UPDATE bestellung SET $whitch = 1 WHERE hash = :bestellungsHash;");
+    $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
+    $stmt->execute();
+    $reservierungs_id = $conn->lastInsertId();
+    $stmt = $conn->prepare("UPDATE main SET status = 'frei' WHERE mensch_id = :besteller_id AND reservierung_id = :reservierungs_id;");
+    $stmt->bindParam(':reservierungs_id', $reservierungs_id, PDO::PARAM_INT);
+    $stonierer_id = $stonierer->getId();
+    $stmt->bindParam(':besteller_id', $stonierer_id, PDO::PARAM_INT);
+    $stmt->execute();
     echo "die bestellung wurde stuniert";
-    $sql = "SELECT Anzahl_tickets, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert From bestellung WHERE hash = '".$bestellungsHash."';";
-    $result = $conn->query($sql);
-    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT Anzahl_tickets, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert FROM bestellung WHERE hash = :bestellungsHash;");
+    $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $number_of_tickets = $row['Anzahl_tickets'];
     $flag = 1;
-    if($row=['besteller_storniert'] == false){
+    if($row['besteller_storniert'] == false){
         $flag = 0;
 
     }
     if($number_of_tickets < 1 ){
 
-        if($row=['gast1_storniert'] == false){
+        if($row['gast1_storniert'] == false){
             $flag = 0;
     
         }
     }
     if($number_of_tickets < 2 ){
-        if($row=['gast2_storniert'] == false){
+        if($row['gast2_storniert'] == false){
             $flag = 0;
     
         }
     }
     if($number_of_tickets < 3 ){
-        if($row=['gast3_storniert'] == false){
+        if($row['gast3_storniert'] == false){
             $flag = 0;
     
         }
     }
     if($number_of_tickets < 4 ){
-        if($row=['gast4_storniert'] == false){
+        if($row['gast4_storniert'] == false){
             $flag = 0;
     
         }
     }
     if($flag == 1){
-        echo "status = storno";
-        $sql = "UPDATE bestellung SET status = 'storno' WHERE hash = '".$bestellungsHash."';";
-        $conn->query($sql);
+        echo "flag war 1";
+        $stmt = $conn->prepare("UPDATE bestellung SET status = 'storno' WHERE hash = :bestellungsHash;");
+        $stmt->bindParam('bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
+        $stmt->execute();
     }
 }
+
+include 'sqlAuth.php';
+include 'hashSeed.php';
+include 'Mensch.php';
 $personHash = $_GET['personhash'];
 $bestellungsHash = $_GET['bestellungsHash'];
 
@@ -52,8 +64,7 @@ $bestellungsHash = $_GET['bestellungsHash'];
 $annzahlTickets;
 $menschid;
 $karteGekauft = 'Wenn due die karten zurückgeben willst, schreib und bitte eine <a href="https://www.instagram.com/aks.karlsruhe/" style="color: #63007F;"><span style="display: inline-block; width: 16px; height: 16px; background-image: url("https://example.com/ig-logo-bw.png"); background-size: cover; margin-right: 5px; vertical-align: middle;"></span>Instagram</a> oder per E-Mail.';
-include 'sqlAuth.php';
-include 'hashSeed.php';
+
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
@@ -62,16 +73,30 @@ try {
   } catch(PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
   }
-$sql = "SELECT id, hash From menschen Where hash = '".$personHash."';";
 
-$result = $conn->query($sql);
-$row = $result->fetch(PDO::FETCH_ASSOC);
+  #creat besteller to del him
+  $stonierer = new Mensch();
+  if(!$stonierer->loadViaHash($conn, $personHash)){
+      exit();
+  }
+  if(!$stonierer->loadreseRvierungIDViabestellungsHash($conn, $bestellungsHash)){
+      exit();
+  }
+
+$stmt = $conn->prepare("SELECT id, hash From menschen Where hash = :personHash;");
+$stmt->bindParam(':personHash', $personHash,PDO::PARAM_STR);
+$stmt->execute();
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 $menschid= $row['id'];
+$stmt = $conn->prepare("UPDATE menschen set email_verified = 1 WHERE hash = :personHash");
+$stmt->bindParam(':personHash', $personHash,PDO::PARAM_STR);
+$stmt->execute();
 
-$sql = "SELECT hash, besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert From bestellung Where hash = '".$bestellungsHash."';";
-$result = $conn->query($sql);
-if($result->rowCount() == 1) {
-    $row = $result->fetch(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare("SELECT hash, besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert From bestellung Where hash = :bestellungsHash;");
+$stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
+$stmt->execute();
+if($stmt->rowCount() == 1) {
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if($menschid == $row['besteller_id'] && !$row['besteller_storniert'] ){
         $whitch = "besteller_storniert";
     }
@@ -87,12 +112,12 @@ if($result->rowCount() == 1) {
     if($menschid == $row['gast4_id'] && !$row['gast4_storniert'] ){
         $whitch = "gast4_storniert";
     }
-    stornieren($whitch, $conn,$bestellungsHash);
+    stornieren($whitch, $conn, $bestellungsHash, $stonierer);
     
     
 
 
-    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 }elseif($row['status'] == 'Gekauft'){
     echo $karteGekauft;
