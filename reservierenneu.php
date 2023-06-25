@@ -1,31 +1,29 @@
 <?php
-function CleanEverything($conn, $IdListMain, $number_of_tickets)
+function CleanEverything($conn, $IdListMain, $number_of_tickets, $reservierung_id)
 {
-    #echo "CleanEverything wird<br>";
-    for ($i = 1; $i <= $number_of_tickets; $i++) {
-        if ($i == 1) {
-            $id = $IdListMain['besteller'];
+    $stmt = $conn->prepare("UPDATE main SET status = 'frei', reservierung_id = NULL WHERE reservierung_id = :reservierung_id;");
+    $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+    $stmt->execute();
+}
 
-        }
-        if ($i == 2) {
-            $id = $IdListMain['gast1'];
-
-        }
-        if ($i == 3) {
-            $id = $IdListMain['gast2'];
-
-        }
-        if ($i == 4) {
-            $id = $IdListMain['gast3'];
-
-        }
-        if ($i == 5) {
-            $id = $IdListMain['gast1'];
-
-        }
-        $sql = "UPDATE main SET status = 'frei' WHERE id = " . $id . ";";
-        $conn->query($sql);
-    }
+function wannerstelltToChar($input/*2023-06-25 08:50:05*/){
+    $input = strrev($input);
+    $datetime  = explode(" ", $input);
+    $time = explode(":", $datetime[0]);
+    $date = explode("-", $datetime[1]);
+    return implode($time).implode($date);
+}   
+function setBestellungsHashSingel($conn, $besteller, $reservierung_id ){
+    $stmt = $conn->prepare("SELECT id, wann_erstellt FROM bestellung WHERE id = :reservierung_id");
+    $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $wannerstelltchar = wannerstelltToChar($row['wann_erstellt']);
+    $Bestlleungs_hash = hash('sha3-512', $besteller->getHash().$wannerstelltchar, false);
+    $stmt = $conn->prepare("UPDATE bestellung set hash = :bestellungs_hash WHERE id = :reservierung_id");
+    $stmt->bindParam(':bestellungs_hash', $Bestlleungs_hash, PDO::PARAM_STR);
+    $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+    $stmt->execute();
 }
 
 
@@ -51,12 +49,13 @@ $params = array(
     'email' => $_POST['email'],
 );
 $IdListMain = array(
-    "besteller" => 0,
-    "gast1" => 0,
+    'besteller' => 0,
+    'gast1' => 0,
     "gast2" => 0,
     "gast3" => 0,
     "gast4" => 0,
 );
+$reservierung_id = 0;
 
 $besteller = new Mensch($params);
 
@@ -70,6 +69,98 @@ if ($agb_check == 0 || $einwilligung_bild_ton == 0) {
     echo "Es wurden nicht alle Hacken gesetzt!";
     exit();
 }
+
+#create bestellung.
+
+$stmt = $conn->prepare("INSERT INTO bestellung (Anzahl_tickets, status) VALUES (:anzahl_tickets, 'reserviert');");
+$stmt->bindParam(':anzahl_tickets', $number_of_tickets, PDO::PARAM_INT);
+$stmt->execute();
+$reservierung_id = $conn->lastInsertId();
+$besteller->setResverierungID($reservierung_id);
+#Bekommen und reservieren von den tickets
+
+$stmt = $conn->prepare("UPDATE main
+                        SET status = 'reserviert',
+                            reservierung_id = :reservierung_id
+                        WHERE status = 'frei'
+                        LIMIT :number_of_tickets;");
+$stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+$stmt->bindParam(':number_of_tickets', $number_of_tickets, PDO::PARAM_INT);
+$stmt->execute();
+
+# bekommen der id der tickets aus MAIN
+$stmt = $conn->prepare("SELECT id FROM main
+                        WHERE status = 'reserviert'
+                        AND reservierung_id = :reservierung_id;");
+$stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+$stmt->execute();
+
+$i = 0;
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+foreach ($rows as $row) {
+    $i++;
+    switch ($i) {
+        case 1:
+            $IdListMain['besteller'] = $row;
+        case 2:
+            $IdListMain['gast1'] = $row;
+        case 3:
+            $IdListMain['gast2'] = $row;
+        case 4:
+            $IdListMain['gast3'] = $row;
+        case 5:
+            $IdListMain['gast4'] = $row;
+
+    }
+
+}
+$problemStatus = $besteller->problemMitInfos($conn);
+echo $problemStatus;
+/*if($problemStatus == 3){
+    if($besteller->doseUserExist($conn)){
+
+    }
+}
+*/
+if ($problemStatus == 3) {
+    if($besteller->userExestiertKomplett($conn)){
+        $besteller->SwitchIDtoexistig($conn);
+    }else{
+        echo "ganz komischer fehler meld dich ebim andmit team";
+        exit();
+    }
+}
+if ($problemStatus != 0) {
+    echo "problemstatus != 0";
+    if ($besteller->activeOrder($conn, $problemStatus)) {
+        echo "problemstatus != 0";
+        echo "Es läuft bereitz eine Bestellung mit diesen infos und einer Bestätiegten e-mail addresse";
+        CleanEverything($conn, $IdListMain, $number_of_tickets, $reservierung_id);
+        exit();
+
+
+    } else {
+        #TODO wenn keine bestellung läuft schauen ob der mensch ganz esestiert und wenn ja die daten übernehmen. wenn nicht einfach reinschriebe! elseif mit = 3 müsste gehen 
+
+    }
+
+} 
+
+
+if ($stmt->rowCount() == $number_of_tickets) {
+
+    echo "genug tickets stehen bereit";
+    $besteller->writeMenschInDB($conn);
+    $besteller->writeIDInMainDB($conn);
+    $besteller->idInBestellung($conn, 0);
+} else {
+    #entweder kein retun oder zu wenige tickets zu bekomen. 
+
+    echo "es tut uns leid es konnten leider nur x tickets reserviert werden, da leider nicht mehr verfügbar sind. Wollen sie die reservierung trozdem weiter führen? bitte bedenken sie, das wenn sie nein drücken ihr anrecht auf die bis jetzt reservierten plätze verfallen!";
+
+}
+
+
 #Schull stuff 
 $stmt = $conn->prepare("SELECT id, name FROM schulen WHERE name = :schule;");
 $stmt->bindParam(':schule', $schule);
@@ -83,7 +174,7 @@ if ($stmt->rowCount() > 0) {
 
     #wenn nein neue schule aufnehmen
     $stmt = $conn->prepare("INSERT INTO schulen (name) VALUES (:schule);");
-    
+
     print_r($stmt->bindParam(':schule', $schule));
     $stmt->execute();
     print_r($stmt->fetch(PDO::FETCH_ASSOC));
@@ -94,52 +185,9 @@ if ($stmt->rowCount() > 0) {
     $schul_id = $row["id"];
 }
 
-
-
-
-
-$stmt = $conn->prepare("SELECT id, STATUS FROM main WHERE status = 'frei';");
-$stmt->execute();
-if ($stmt->rowCount() > 0) {
-    $stmtUpdate = $conn->prepare("UPDATE main SET status = 'reserviert' WHERE id = :id;");
-    for ($i = 0; $i <= $number_of_tickets; $i++) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $id = $row["id"];
-        $stmtUpdate->bindParam(':id', $id);
-        $stmtUpdate->execute();
-        if ($i == 0) {
-            $IdListMain['besteller'] = $id;
-        }
-        if ($i == 1) {
-            $IdListMain['gast1'] = $id;
-        }
-        if ($i == 2) {
-            $IdListMain['gast2'] = $id;
-        }
-        if ($i == 3) {
-            $IdListMain['gast3'] = $id;
-        }
-        if ($i == 4) {
-            $IdListMain['gast4'] = $id;
-        }
-    }
-    #return legend 0-> exestiert nicht in DB 1-> Es exestiert nen user mit der gelichen Mail 2-> es name, vorname und gb date exestieren 3-> ganz passend 
-    $problemStatus = $besteller->problemMitInfos($conn);
-    if ($problemStatus == 0) {
-
-    } else {
-        if ($besteller->activeOrder($conn, $problemStatus)) {
-            echo "Es läuft bereitz eine Bestellung mit diesen infos und einer Bestätiegten e-mail addresse";
-            CleanEverything($conn, $IdListMain, $number_of_tickets);
-            exit();
-        }
-    }
-
-
-
-} else {
-    echo "error!!!!!!!";
+if($number_of_tickets == 1){
+    setBestellungsHashSingel($conn, $besteller, $reservierung_id);
+    
 }
-
 
 ?>
