@@ -10,7 +10,7 @@
 <?php
 include 'sqlAuth.php';
 $max_ausleihe = 5;
-
+#git ls-files | %{ Get-Content -Path $_ } | measure
 try {
   $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

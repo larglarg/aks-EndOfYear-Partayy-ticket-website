@@ -4,46 +4,59 @@ function stornieren($whitch, $conn, $bestellungsHash, $stonierer){
     $stmt = $conn->prepare("UPDATE bestellung SET $whitch = 1 WHERE hash = :bestellungsHash;");
     $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
     $stmt->execute();
-    $reservierungs_id = $conn->lastInsertId();
-    $stmt = $conn->prepare("UPDATE main SET status = 'frei' WHERE mensch_id = :besteller_id AND reservierung_id = :reservierungs_id;");
+
+    $stmt = $conn->prepare("SELECT id FROM bestellung WHERE hash = :bestellungsHash;");
+    $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($row !== false) {
+        $reservierungs_id = $row['id'];
+        echo "Die Bestellung wurde storniert. Aktualisierte Zeilen-ID: $reservierungs_id";
+    } else {
+        echo "Es wurden keine Zeilen aktualisiert.";
+    }
+
+    
+    $stmt = $conn->prepare("UPDATE main SET status = 'frei', mensch_id = null, reservierung_id = null WHERE mensch_id = :besteller_id AND reservierung_id = :reservierungs_id;");
     $stmt->bindParam(':reservierungs_id', $reservierungs_id, PDO::PARAM_INT);
     $stonierer_id = $stonierer->getId();
     $stmt->bindParam(':besteller_id', $stonierer_id, PDO::PARAM_INT);
     $stmt->execute();
     echo "die bestellung wurde stuniert";
-    $stmt = $conn->prepare("SELECT Anzahl_tickets, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert FROM bestellung WHERE hash = :bestellungsHash;");
+    $stmt = $conn->prepare("SELECT Anzahl_tickets, besteller_id, gast1_id, gast2_id, gast3_id, gast4_id, besteller_storniert, gast1_storniert, gast2_storniert, gast3_storniert, gast4_storniert FROM bestellung WHERE hash = :bestellungsHash;");
     $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $number_of_tickets = $row['Anzahl_tickets'];
     $flag = 1;
-    if($row['besteller_storniert'] == false){
+    if($row['besteller_storniert'] == false && $row['besteller_id'] != $stonierer_id){
         $flag = 0;
+        echo "besteller";
+    }
+    if($number_of_tickets > 1){
 
-    }
-    if($number_of_tickets < 1 ){
-
-        if($row['gast1_storniert'] == false){
+        if($row['gast1_storniert'] == false && $row['gast1_id'] != $stonierer_id){
             $flag = 0;
-    
+            echo "gast1";
         }
     }
-    if($number_of_tickets < 2 ){
-        if($row['gast2_storniert'] == false){
+    if($number_of_tickets > 2 ){
+        if($row['gast2_storniert'] == false && $row['gast2_id'] != $stonierer_id){
             $flag = 0;
-    
+            echo "gast2";
         }
     }
-    if($number_of_tickets < 3 ){
-        if($row['gast3_storniert'] == false){
+    if($number_of_tickets > 3 ){
+        if($row['gast3_storniert'] == false && $row['gast3_id'] != $stonierer_id){
             $flag = 0;
-    
+            echo "gast3";
         }
     }
-    if($number_of_tickets < 4 ){
-        if($row['gast4_storniert'] == false){
+    if($number_of_tickets > 4 ){
+        if($row['gast4_storniert'] == false && $row['gast4_id'] != $stonierer_id){
             $flag = 0;
-    
+            echo "gast4";
         }
     }
     if($flag == 1){
