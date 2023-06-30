@@ -64,6 +64,21 @@ class Mensch
 
         return $this;
     }
+    public function userExestiertKomplett($conn)
+    {
+        $stmt = $conn->prepare("SELECT id, email, name, vorname, gb_datum FROM menschen WHERE email = :email AND name = :name AND vorname = :vorname AND gb_datum = :gb_datum;");
+        $stmt->bindParam(':vorname', $this->vorname);
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':gb_datum', $this->gb_datum);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->execute();
+        if ($stmt->rowCount() != 0) {
+
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function problemMitInfos($conn)
     #return legend 0-> exestiert nicht in DB 1-> Es exestiert nen user mit 2-> es name, vorname und gb date exestieren 3-> ganz passend 4-> es gibt eine aktive bestellung
     {
@@ -71,7 +86,7 @@ class Mensch
         $mailExists = false;
         $restExists = false;
         $stmt = $conn->prepare("SELECT id, email FROM menschen WHERE email = :email AND email_verified = 1 ;");
-        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
         $stmt->execute();
         if ($stmt->rowCount() != 0) {
             $mailExists = true;
@@ -88,6 +103,7 @@ class Mensch
         }
 
         if ($mailExists && $restExists) {
+            
             return 3;
         } elseif ($restExists) {
             return 2;
@@ -146,33 +162,68 @@ class Mensch
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         $stmt->execute();
     }
-    public function userExestiertKomplett($conn)
-    {
-        $stmt = $conn->prepare("SELECT id, email, name, vorname, gb_datum FROM menschen WHERE email = :email AND name = :name AND vorname = :vorname AND gb_datum = :gb_datum;");
-        $stmt->bindParam(':vorname', $this->vorname);
-        $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':gb_datum', $this->gb_datum);
-        $stmt->bindParam(':email', $this->email);
+    private function ChangeIDinMain($conn, $newID){
+        echo "ChangeIDinMain";
+        $stmt = $conn->prepare("UPDATE main SET mensch_id = :newid WHERE mensch_id = :id;");
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->bindParam(':newid', $newID, PDO::PARAM_INT);
         $stmt->execute();
-        if ($stmt->rowCount() != 0) {
 
-            return true;
-        } else {
-            return false;
-        }
     }
-    public function SwitchIDtoexistig($conn)
-    {
-        $stmt = $conn->prepare("SELECT id, email, name, vorname, gb_datum FROM menschen WHERE email = :email AND name = :name AND vorname = :vorname AND gb_datum = :gb_datum;");
-        $stmt->bindParam(':vorname', $this->vorname);
-        $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':gb_datum', $this->gb_datum);
-        $stmt->bindParam(':email', $this->email);
+    private function ChangeIDinBestellungen($conn, $newID){
+        echo "ChangeIDinBestellungen";
+        $stmt  = $conn->prepare(
+                        "SELECT besteller_id, gast1_id, gast2_id, gast3_id, gast4_id 
+                        FROM bestellung 
+                        WHERE id = :reservierungs_id;"
+                );
+
+        $stmt->bindParam(':id', $this->resverierungID, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $this->id = $row['id'];
 
+        switch($this->id){
+            
+            case $row['besteller_id']:
+                $columnName = $row['besteller_id'];
+            case $row['gast1_id']:
+                $columnName = $row['gast1_id'];
+            case $row['gast2_id']:
+                $columnName = $row['gast2_id'];
+            case $row['gast3_id']:
+                $columnName = $row['gast3_id'];
+            case $row['gast4_id']:
+                $columnName = $row['gast4_id'];
 
+        }
+        $stmt = $conn->prepare("UPDATE bestellung SET $columnName = :id  WHERE id = :reservierung_id;");
+        $stmt->bindParam(':reservierung_id', $this->resverierungID, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $newID, PDO::PARAM_INT);
+        $stmt->execute();
+            
+    }
+
+    public function SwitchIDtoexistig($conn)
+    {
+        $stmt = $conn->prepare("SELECT id, email, name, vorname, gb_datum FROM menschen WHERE email = :email AND name = :name AND vorname = :vorname AND id != :id AND gb_datum = :gb_datum;");
+        $stmt->bindParam(':vorname', $this->vorname, PDO::PARAM_STR);
+        $stmt->bindParam(':name', $this->name, PDO::PARAM_STR);
+        $stmt->bindParam(':gb_datum', $this->gb_datum, PDO::PARAM_STR);
+        $stmt->bindParam(':email', $this->email, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->execute();
+        if($stmt->rowCount()  == 1 ){
+        $newID = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare('DELETE FROM menschen WHERE id = :id;');
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $stmt->execute();
+        $this->ChangeIDinBestellungen($conn, $newID);
+        $this->ChangeIDinMain($conn, $newID);
+        $this->id = $newID['id'];
+
+    }else{#wenn rowcount nciht eins ist ist was schiefgegeangen 
+        echo "error in mensch.SwitchIDtoexistig ";
+    }
     }
 
     private function checkIDforOrder($conn, $id)
@@ -214,7 +265,7 @@ class Mensch
                     }
                 }
             case 3:
-                if (!$this->checkIDforOrder($conn, $this->id)) {
+                if ($this->checkIDforOrder($conn, $this->id)) {
                     return true;
                 }
 

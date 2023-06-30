@@ -81,7 +81,7 @@ if ($count_free >= 1) {
             weitere Personen darauf zu erkennen sind.</label>
         </div>
         <div class="EinzeldAbholen">
-          <input type="checkbox" id="EinzeldAbholen" name="EinzeldAbholen" required>
+          <input type="checkbox" id="EinzeldAbholen" name="EinzeldAbholen">
           <label for="EinzeldAbholen">Jeder soll seine karten selbst abholen.</label>
         </div>
 

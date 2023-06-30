@@ -122,9 +122,14 @@ $problemStatus = $besteller->problemMitInfos($conn);
     }
 }
 */
+
+
 if ($problemStatus == 3) {
-    if($besteller->userExestiertKomplett($conn)){
+    echo "problemstatus ist 3";
+    if($besteller->userExestiertKomplett($conn)){   
+        echo "user exestiert kommplet und wird geswitcht";
         $besteller->SwitchIDtoexistig($conn);
+        
     }else{
         echo "ganz komischer fehler meld dich ebim andmit team";
         exit();
@@ -183,7 +188,7 @@ if ($stmt->rowCount() > 0) {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $schul_id = $row["id"];
 }
-
+/*
 if($number_of_tickets == 1){
     echo "is in if send mail";
     $bestellungsHash= setBestellungsHashSingel($conn, $besteller, $reservierung_id);
@@ -193,5 +198,5 @@ if($number_of_tickets == 1){
     header('Location: ' . $zielUrlMitParametern);
     exit();
 }
-
+*/
 ?>

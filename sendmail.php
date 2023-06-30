@@ -37,7 +37,7 @@ $stmt->bindParam(':personHash', $personHash, PDO::PARAM_STR);
 $stmt->execute();
 
 if ($stmt->rowCount() != 1) {
-    echo "Der mensch exestiert nicht";
+    echo "Der mensch exestiert nicht oder mehr als ein mal";
     exit();
 }
 
