@@ -35,7 +35,6 @@ try {
 $stmt = $conn->prepare("SELECT id, hash, email FROM menschen WHERE hash = :personHash;");
 $stmt->bindParam(':personHash', $personHash, PDO::PARAM_STR);
 $stmt->execute();
-
 if ($stmt->rowCount() != 1) {
     echo "Der mensch exestiert nicht oder mehr als ein mal";
     exit();
@@ -99,7 +98,6 @@ switch ($whitchEmail) {
             $mail->Subject = 'Reservierung Karten AKS EndOfYear Partayy';
             $mail->Body = $message;
             $mail->send();
-             echo 'Die Nachricht wurde gesendet';
         } catch (Exception $e) {
             echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mail->ErrorInfo}";
         }
