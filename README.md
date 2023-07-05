@@ -1,5 +1,5 @@
 # aks-EndOfYear-Partayy-ticket-website
-
+SCHAU CODE JO SCHAU EINFACH CODE 
 
 install
 
