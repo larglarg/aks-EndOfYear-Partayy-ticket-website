@@ -9,14 +9,14 @@ install
 -> unter includes/ php mailer ordner einbauen
 ->url in code anpassen
 -> mailAuth.php mit 
-<?php
+#<?php
 $mailusername = '';
 $mailpassword = '';
 $smtpHost = '';
 $smtpPort = '';
-?>
+#?>
 -> hashSeed.php
-<?php
+#<?php
 $hashseed = "t2l0xIbIwyRTsqyER9m4";
 /*
             Generierung hash
@@ -30,17 +30,17 @@ for ($i = 0; $i < $length; $i++) {
 echo $randomString;
 */
 
-?>
+#?>
 
 Einmal unauskomentiert laufen lassen 
 -> sqlAuth.php
 
-<?php
+#<?php
 $servername = "localhost";
 $username = "root";
 $password = "";
 $sqlPort = "";
-?>
+#?>
 
 
 create.sql ausführen auf db server 
