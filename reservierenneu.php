@@ -152,7 +152,7 @@ if ($CountReservierterTickets == $number_of_tickets) {
 $bestellungsHash = setBestellungsHashSingel($conn, $besteller, $reservierung_id);
 
 $zielUrl = './sendmail.php';
-$zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($besteller->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash) . '&whitchEmail=' . urlencode(1);
+$zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($besteller->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash);
 header('Location: ' . $zielUrlMitParametern);
 exit();
 ?>

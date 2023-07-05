@@ -1,4 +1,19 @@
 <?php
+
+
+function alleHabenBesteatigt($conn, $reservierung_id){
+
+
+  $stmt = $conn->prepare("SELECT id from main where status = 'reserviert' AND reservierung_id = :reservierung_id;");
+  $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+  $stmt->execute();
+  if($stmt->rowCount() != 0){
+    return false;
+  }else{
+    return true;
+  }
+
+}
 function newMensch($conn, $mensch, $schulname, $bestellungsHash, $hashseed, $i){
 
 $problemStatus = $mensch->problemMitInfos($conn);
@@ -45,10 +60,22 @@ if ($problemStatus != 0) {
     #hier nächstes mal wieter 
     #das könnte helfen https://stackoverflow.com/questions/20842208/run-php-script-without-output-to-browser
     
-    $zielUrl = './sendmail.php';
-    $zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($mensch->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash) . '&whitchEmail=' . urlencode(1);
-    header('Location: ' . $zielUrlMitParametern);
+  #  $zielUrl = './sendmail.php';
+  #  $zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($mensch->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash) . '&whitchEmail=' . urlencode(1);
+  #  header('Location: ' . $zielUrlMitParametern);
+  #sendern besteatigungsmail an gast.
+  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendmail.php';
 
+  $params = [
+      'personHash' => $mensch->getHash(),
+      'bestellungsHash' => $bestellungsHash,
+  ];
+  $url = $file . '?' . http_build_query($params);
+  
+  $message = file_get_contents($url);
+  echo $message;
+
+  
 }
 
 
@@ -66,7 +93,7 @@ $params = array(
     'email' => "",
 );
 $schule = $_POST['schule'];
-
+$istBestller = 0;
 try {
     $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -104,7 +131,28 @@ if($row['besteller_id'] == $besteatieger->getId()){
     $istBestller = true;
 }
 $besteatieger->besteatigInMain($conn, $reservierung_id);
+$besteatieger->verifieMailinDB($conn);
+if(alleHabenBesteatigt($conn, $reservierung_id)){
+  $stmt = $conn->prepare("UPDATE bestellung set status = 'besteatigt' WHERE id = :reservierung_id");
+  $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
+  $stmt->execute();
 
+  #senden mail für agb etc. 
+  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendmail.php';
+
+
+  $url = $file . '?' . http_build_query($params);
+  
+  $message = file_get_contents($url);
+  #senden abhol qr code
+  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendmail.php';
+
+
+  $url = $file . '?' . http_build_query($params);
+  
+  $message = file_get_contents($url);
+
+}
 
 
 ?>

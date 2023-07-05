@@ -40,6 +40,9 @@ if ($count_free >= 1) {
   ?>
 
   <body>
+    <?php
+      echo 'PHP version: ' . phpversion();
+    ?>
     <div class="container">
       <h1>Ticket-Reservierung</h1>
       <h3>Es sind noch

@@ -178,7 +178,7 @@ class Mensch
         $stmt = $conn->prepare("SELECT id FROM bestellung WHERE hash = :hash");
         $stmt->bindParam(':hash', $bestellungsHash, PDO::PARAM_STR);
         $stmt->execute();
-        $this->id = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+        $this->resverierungID = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
     }
 
     private function ChangeIDinMain($conn, $newID)
@@ -296,35 +296,34 @@ class Mensch
                 $stmt->execute();
                 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($rows as $row) {
-                    if (!$this->checkIDforOrder($conn, $row['id'])) {
-
+                    if ($this->checkIDforOrder($conn, $row['id'])) {
                         return true;
                     }
                 }
+                break;
             case 2:
-                $stmt = $conn->prepare('SELECT id, name, vorname, gb_datum FROM menschen WHERE name = :name AND vorname = :vorname AND gb_datum = :gb_datum; AND email_verified = 1');
+                $stmt = $conn->prepare('SELECT id, name, vorname, gb_datum FROM menschen WHERE name = :name AND vorname = :vorname AND gb_datum = :gb_datum AND email_verified = 1');
                 $stmt->bindParam(':vorname', $this->vorname, PDO::PARAM_STR);
                 $stmt->bindParam(':name', $this->name, PDO::PARAM_STR);
                 $stmt->bindParam(':gb_datum', $this->gb_datum, PDO::PARAM_STR);
                 $stmt->execute();
                 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($rows as $row) {
-                    if (!$this->checkIDforOrder($conn, $row['id'])) {
-
+                    if ($this->checkIDforOrder($conn, $row['id'])) {
                         return true;
                     }
                 }
+                break;
             case 3:
                 if ($this->checkIDforOrder($conn, $this->id)) {
-
                     return true;
                 }
-
+                break;
         }
-
+    
         return false;
-
     }
+    
     public function generateHash($hashseed)
     {
         $this->hash = hash('sha3-512', $this->name . $this->vorname . $this->gb_datum . $this->email . $hashseed, false);
@@ -351,7 +350,8 @@ class Mensch
 
     public function writeIDInMainDB($conn)
     {
-        $stmt = $conn->prepare("UPDATE main SET mensch_id = :id WHERE reservierung_id = :reservierung_id LIMIT 1;");
+        print_r("hello writeidinmaindb".$this->id.$this->resverierungID);
+        $stmt = $conn->prepare("UPDATE main SET mensch_id = :id WHERE reservierung_id = :reservierung_id AND mensch_id is NULL LIMIT 1;");
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         $stmt->bindParam(':reservierung_id', $this->resverierungID, PDO::PARAM_INT);
         $stmt->execute();
