@@ -63,7 +63,7 @@ $params = [
     'personHash' => $personHash,
     'bestellungsHash' => $bestellungsHash
 ];
-$url = $file . '?' . http_build_query($params);
+$url = $file . '?personHash='.$personHash.'&bestellungsHash='.$bestellungsHash;
 
 $message = file_get_contents($url);
 $to = $email;
