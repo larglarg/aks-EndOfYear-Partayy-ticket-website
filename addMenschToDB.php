@@ -68,7 +68,7 @@ $params = array(
     'bestellungsHash' => $bestellungsHash,
     'email' => $email,
 );
-$sendmailURL = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/sendmail.php?' . http_build_query($params);
+$sendmailURL = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/sendmail.php?' . http_build_query($params); // Mach nen Funktion Call draus kein API CALL
 $response = file_get_contents($sendmailURL);
 echo $response;
 ?>
