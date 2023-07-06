@@ -136,7 +136,7 @@ if ($CountReservierterTickets == $number_of_tickets) {
 
     echo "genug tickets stehen bereit";
     if ($besteller->getId() == 0) {
-        $besteller->generateHash($hashseed);
+        $besteller->generateHash($NumberOfBytes);
         $besteller->writeMenschInDB($conn);
     } else {
         $besteller->SetHashFromDB($conn);
@@ -150,7 +150,10 @@ if ($CountReservierterTickets == $number_of_tickets) {
     echo "es tut uns leid es konnten leider nur x tickets reserviert werden, da leider nicht mehr verfügbar sind. Wollen sie die reservierung trozdem weiter führen? bitte bedenken sie, das wenn sie nein drücken ihr anrecht auf die bis jetzt reservierten plätze verfallen!";
 }
 $bestellungsHash = bin2hex(random_bytes($NumberOfBytes));
-
+$stmt = $conn->prepare("UPDATE bestellung set hash = :hash WHERE id = :id");
+$stmt->bindParam(':hash', $bestellungsHash, PDO::PARAM_STR);
+$stmt->bindParam(':id', $reservierung_id,   PDO::PARAM_INT);
+$stmt->execute();
 $zielUrl = './sendmail.php';
 $zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($besteller->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash);
 header('Location: ' . $zielUrlMitParametern);

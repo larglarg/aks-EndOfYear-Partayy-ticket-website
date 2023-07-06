@@ -16,7 +16,7 @@ function alleHabenBesteatigt($conn, $reservierung_id)
   }
 
 }
-function newMensch($conn, $mensch, $schulname, $bestellungsHash, $hashseed, $i)
+function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash, $i)
 {
 
   $problemStatus = $mensch->problemMitInfos($conn);
@@ -55,7 +55,7 @@ function newMensch($conn, $mensch, $schulname, $bestellungsHash, $hashseed, $i)
 
   }
   $mensch->setResverierungIDviaHash($conn, $bestellungsHash);
-  $mensch->generateHash($hashseed);
+  $mensch->generateHash($NumberOfBytes);
   $mensch->writeMenschInDB($conn);
   $mensch->writeIDInMainDB($conn);
   $mensch->idInBestellung($conn, $i);
@@ -175,7 +175,7 @@ if ($number_of_tickets != 1 && $istBestller) {
           'email' => $_POST['email1'],
         );
         $gast1 = new Mensch($params);
-        newMensch($conn, $gast1, $_POST['schule1'], $bestellungsHash, $hashseed, $i);
+        newMensch($conn, $NumberOfBytes, $gast1, $_POST['schule1'], $bestellungsHash, $i);
         break;
       case 2:
         echo "<h3>Zweite begleitung</h3>";
