@@ -149,7 +149,7 @@ if ($CountReservierterTickets == $number_of_tickets) {
 
     echo "es tut uns leid es konnten leider nur x tickets reserviert werden, da leider nicht mehr verfügbar sind. Wollen sie die reservierung trozdem weiter führen? bitte bedenken sie, das wenn sie nein drücken ihr anrecht auf die bis jetzt reservierten plätze verfallen!";
 }
-$bestellungsHash = setBestellungsHashSingel($conn, $besteller, $reservierung_id);
+$bestellungsHash = bin2hex(random_bytes($NumberOfBytes));
 
 $zielUrl = './sendmail.php';
 $zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($besteller->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash);
