@@ -1,11 +1,47 @@
 <?php
+
+
+function sendMail($mailer, $sender_name, $recipient, $subject, $message, $isHTML = TRUE)
+{
+    try {
+        include 'mailAuth.php';
+        // Servereinstellungen
+        #$mailer->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
+        $mailer->isSMTP(); // Sende über SMTP
+    
+        $mailer->Host = $smtpHost; // Setze den SMTP-Server für den Versand
+        $mailer->SMTPAuth = true; // Aktiviere SMTP-Authentifizierung
+        $mailer->Username = $mailusername; // SMTP-Benutzername
+        $mailer->Password = $mailpassword; // SMTP-Passwort
+        $mailer->SMTPSecure = "TLS"; // Aktiviere TLS-Verschlüsselung
+        $mailer->Port = $smtpPort; // TCP-Port zum Verbinden; verwende 587, wenn `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS` gesetzt ist
+        $mailer->CharSet = 'UTF-8';
+        $mailer->Encoding = 'base64';
+
+        // 
+        $mailer->setFrom($senderMail, $sender_name);// 'AKS Karlsruhe');
+                
+        // Empfänger
+        $mailer->addAddress($recipient); // Füge einen Empfänger hinzu
+    
+        // Inhalt
+        $mailer->isHTML($isHTML); // Setze das E-Mail-Format auf HTML
+        $mailer->Subject = $subject;//'Reservierung Karten AKS EndOfYear Partayy';
+        $mailer->Body = $message;
+        $mailer->send();
+    } catch (Exception $e) {
+        echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mailer->ErrorInfo}";
+        return false;
+    }
+    return true;
+}
 // Retrieve the passed variables from the URL parameters
 $menschId;
 $message;
 include 'sqlAuth.php';
 $personHash = $_GET['personHash'];
 $bestellungsHash = $_GET['bestellungsHash'];
-include 'mailAuth.php';
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -22,7 +58,7 @@ require 'includes/PHPMailer/src/SMTP.php';
 
 
 // Erstelle eine Instanz; das Argument `true` ermöglicht das Werfen von Ausnahmen (Exceptions)
-$mail = new PHPMailer(true);
+$mailer = new PHPMailer(true);
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
@@ -67,41 +103,9 @@ $url = $file . '?personHash='.$personHash.'&bestellungsHash='.$bestellungsHash;
 
 $message = file_get_contents($url);
 //$to = $email;
-sendMail($email, 'AKS Karlsruhe', $email, 'Reservierung Karten AKS EndOfYear Partayy', $message);
+sendMail($mailer, 'AKS Karlsruhe', $email, 'Reservierung Karten AKS EndOfYear Partayy', $message);
 
-function sendMail($sender_address, $sender_name, $recipient, $subject, $message, $isHTML = TRUE)
-{
-    try {
-        // Servereinstellungen
-        #$mail->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
-        $mail->isSMTP(); // Sende über SMTP
-    
-        $mail->Host = $smtpHost; // Setze den SMTP-Server für den Versand
-        $mail->SMTPAuth = true; // Aktiviere SMTP-Authentifizierung
-        $mail->Username = $mailusername; // SMTP-Benutzername
-        $mail->Password = $mailpassword; // SMTP-Passwort
-        $mail->SMTPSecure = "TLS"; // Aktiviere TLS-Verschlüsselung
-        $mail->Port = $smtpPort; // TCP-Port zum Verbinden; verwende 587, wenn `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS` gesetzt ist
-        $mail->CharSet = 'UTF-8';
-        $mail->Encoding = 'base64';
 
-        // 
-        $mail->setFrom($sender_address, $sender_name);// 'AKS Karlsruhe');
-                
-        // Empfänger
-        $mail->addAddress($email); // Füge einen Empfänger hinzu
-    
-        // Inhalt
-        $mail->isHTML($isHTML); // Setze das E-Mail-Format auf HTML
-        $mail->Subject = $subject;//'Reservierung Karten AKS EndOfYear Partayy';
-        $mail->Body = $message;
-        $mail->send();
-    } catch (Exception $e) {
-        echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mail->ErrorInfo}";
-        return false;
-    }
-    return true;
-}
 
 
 ?>
