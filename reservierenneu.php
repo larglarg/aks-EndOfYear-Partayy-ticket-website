@@ -136,7 +136,7 @@ if ($CountReservierterTickets == $number_of_tickets) {
 
     echo "genug tickets stehen bereit";
     if ($besteller->getId() == 0) {
-        $besteller->generateHash($NumberOfBytes);
+        $besteller->generateHash($hashseed);
         $besteller->writeMenschInDB($conn);
     } else {
         $besteller->SetHashFromDB($conn);
