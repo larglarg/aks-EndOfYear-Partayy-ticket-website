@@ -12,11 +12,11 @@ $bestellungsHash = $_GET['bestellungsHash'];
 
 include 'sqlAuth.php';
 include 'mailAuth.php';
-
+include 'hashSeed.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
-use PHPQRCode\QRcode;
+
 
 require 'includes/PHPMailer/src/Exception.php';
 require 'includes/PHPMailer/src/PHPMailer.php';
