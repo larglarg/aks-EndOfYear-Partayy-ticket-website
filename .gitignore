@@ -1,4 +1,3 @@
 mailAuth.php
 includes/
 sqlAuth.php
-hashSeed.php

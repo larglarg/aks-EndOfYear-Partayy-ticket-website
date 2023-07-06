@@ -1,0 +1,3 @@
+<?php
+$NumberOfBytes = 64;
+?>
