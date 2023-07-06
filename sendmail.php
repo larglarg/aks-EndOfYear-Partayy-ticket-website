@@ -66,37 +66,44 @@ $params = [
 $url = $file . '?personHash='.$personHash.'&bestellungsHash='.$bestellungsHash;
 
 $message = file_get_contents($url);
-$to = $email;
+//$to = $email;
+sendMail($email, 'AKS Karlsruhe', $email, 'Reservierung Karten AKS EndOfYear Partayy', $message);
 
-
-
-
-try {
-    // Servereinstellungen
-    #$mail->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
-    $mail->isSMTP(); // Sende über SMTP
-
-    $mail->Host = $smtpHost; // Setze den SMTP-Server für den Versand
-    $mail->SMTPAuth = true; // Aktiviere SMTP-Authentifizierung
-    $mail->Username = $mailusername; // SMTP-Benutzername
-    $mail->Password = $mailpassword; // SMTP-Passwort
-    $mail->SMTPSecure = "TLS"; // Aktiviere TLS-Verschlüsselung
-    $mail->Port = $smtpPort; // TCP-Port zum Verbinden; verwende 587, wenn `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS` gesetzt ist
-    $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'base64';
-    // Empfänger
-    $mail->setFrom($from, 'AKS Karlsruhe');
+function sendMail($sender_address, $sender_name, $recipient, $subject, $message, $isHTML = TRUE)
+{
+    try {
+        // Servereinstellungen
+        #$mail->SMTPDebug = SMTP::DEBUG_SERVER; // Aktiviere detaillierte Debug-Ausgabe
+        $mail->isSMTP(); // Sende über SMTP
     
-    $mail->addAddress($email); // Füge einen Empfänger hinzu
+        $mail->Host = $smtpHost; // Setze den SMTP-Server für den Versand
+        $mail->SMTPAuth = true; // Aktiviere SMTP-Authentifizierung
+        $mail->Username = $mailusername; // SMTP-Benutzername
+        $mail->Password = $mailpassword; // SMTP-Passwort
+        $mail->SMTPSecure = "TLS"; // Aktiviere TLS-Verschlüsselung
+        $mail->Port = $smtpPort; // TCP-Port zum Verbinden; verwende 587, wenn `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS` gesetzt ist
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
 
-    // Inhalt
-    $mail->isHTML(true); // Setze das E-Mail-Format auf HTML
-    $mail->Subject = 'Reservierung Karten AKS EndOfYear Partayy';
-    $mail->Body = $message;
-    $mail->send();
-} catch (Exception $e) {
-    echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mail->ErrorInfo}";
+        // 
+        $mail->setFrom($sender_address, $sender_name);// 'AKS Karlsruhe');
+                
+        // Empfänger
+        $mail->addAddress($email); // Füge einen Empfänger hinzu
+    
+        // Inhalt
+        $mail->isHTML($isHTML); // Setze das E-Mail-Format auf HTML
+        $mail->Subject = $subject;//'Reservierung Karten AKS EndOfYear Partayy';
+        $mail->Body = $message;
+        $mail->send();
+    } catch (Exception $e) {
+        echo "Die Nachricht konnte nicht gesendet werden. Mailer Error: {$mail->ErrorInfo}";
+        return false;
+    }
+    return true;
 }
+
+
 ?>
 
 <body>
