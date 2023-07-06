@@ -26,13 +26,13 @@ CREATE TABLE `bestellung` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `Anzahl_tickets` INT,
   `besteller_id` INT,
-  `gast1_id` INT,
-  `gast2_id` INT,
+  `gast1_id` INT,-- Warum nicht eine Gast-Tabelle machen und auf die Bestellung Referenzen 
+  `gast2_id` INT,-- Die Limits sind besser im Code zu defininieren nicht in der Datenbank
   `gast3_id` INT,
   `gast4_id` INT,
   `status` ENUM('reserviert', 'besteatigt', 'gekauft', 'abgelaufen', 'storno'),
   `wann_erstellt` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `einzeld_oder_zusammen` TINYINT(1),
+  `einzeld_oder_zusammen` TINYINT(1), -- WHY TINYINT(1) not Boolean?
   `hash` VARCHAR(1000),
   `besteller_storniert` BOOLEAN,
   `gast1_storniert` BOOLEAN,

@@ -57,7 +57,7 @@ if ($stmt->rowCount() > 1) {
     exit();
 }
 $from = "lars.handwerker@web.de";
-$file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php';
+$file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php'; // Why would you do that?
 
 $params = [
     'personHash' => $personHash,
