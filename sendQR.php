@@ -1,11 +1,10 @@
 <?php
 
-function getqrcodepath($bestellungsHash, $hash)
+function getqrcodepath($NumberOfBytes)
 {
     $QRPath = "./qrcodes/";
-    $filename = "qrcode" . $bestellungsHash . $hash . ".png";
-    $codeContents = "http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash);
-    return $QRPath . $filename . $codeContents;
+    $filename = "qrcode" .bin2hex(random_bytes($NumberOfBytes)).".png";
+    return $QRPath . $filename;
 }
 
 // Retrieve the passed variables from the URL parameters
@@ -48,7 +47,7 @@ if ($row['einzeld_oder_zusammen'] == 0 || $Anzahl_tickets == 1) {
     $mensch = $stmt->fetch(PDO::FETCH_ASSOC);
     $email = $mensch['email'];
     $hash = $mensch['hash'];
-    $QRPath = getqrcodepath($bestellungsHash, $hash);
+    $QRPath = getqrcodepath($NumberOfBytes);
     QRcode::png("http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
 
     $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/Send_QE_code.php';
