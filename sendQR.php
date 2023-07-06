@@ -1,11 +1,10 @@
 <?php
 
-function getqrcodepath($bestellungsHash, $hash)
+function getqrcodepath($NumberOfBytes)
 {
     $QRPath = "./qrcodes/";
-    $filename = "qrcode" . $bestellungsHash . $hash . ".png";
-    $codeContents = "http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash);
-    return $QRPath . $filename . $codeContents;
+    $filename = "qrcode" .bin2hex(random_bytes($NumberOfBytes)).".png";
+    return $QRPath . $filename;
 }
 
 // Retrieve the passed variables from the URL parameters
@@ -13,11 +12,11 @@ $bestellungsHash = $_GET['bestellungsHash'];
 
 include 'sqlAuth.php';
 include 'mailAuth.php';
-
+include 'hashSeed.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
-use PHPQRCode\QRcode;
+
 
 require 'includes/PHPMailer/src/Exception.php';
 require 'includes/PHPMailer/src/PHPMailer.php';
@@ -48,12 +47,11 @@ if ($row['einzeld_oder_zusammen'] == 0 || $Anzahl_tickets == 1) {
     $mensch = $stmt->fetch(PDO::FETCH_ASSOC);
     $email = $mensch['email'];
     $hash = $mensch['hash'];
-    $QRPath = getqrcodepath($bestellungsHash, $hash);
+    $QRPath = getqrcodepath($NumberOfBytes);
     QRcode::png("http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
-
+    #get contett of mail 
     $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/Send_QE_code.php';
     $params = [
-        'personHash' => $personHash,
         'bestellungsHash' => $bestellungsHash,
         'path' => $QRPath
     ];
@@ -105,12 +103,11 @@ if ($row['einzeld_oder_zusammen'] == 0 || $Anzahl_tickets == 1) {
         $mensch = $stmt->fetch(PDO::FETCH_ASSOC);
         $email = $mensch['email'];
         $hash = $mensch['hash'];
-        $QRPath = getqrcodepath($bestellungsHash, $hash);
+        $QRPath = getqrcodepath($NumberOfBytes);
         QRcode::png("http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
 
         $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/Send_QE_code.php';
         $params = [
-            'personHash' => $personHash,
             'bestellungsHash' => $bestellungsHash,
             'path' => $QRPath
         ];

@@ -60,12 +60,6 @@ function newMensch($conn, $mensch, $schulname, $bestellungsHash, $hashseed, $i)
   $mensch->writeIDInMainDB($conn);
   $mensch->idInBestellung($conn, $i);
   $mensch->setSchulIdByName($conn, $schulname);
-  #hier nächstes mal wieter 
-  #das könnte helfen https://stackoverflow.com/questions/20842208/run-php-script-without-output-to-browser
-
-  #  $zielUrl = './sendmail.php';
-  #  $zielUrlMitParametern = $zielUrl . '?personHash=' . urlencode($mensch->getHash()) . '&bestellungsHash=' . urlencode($bestellungsHash) . '&whitchEmail=' . urlencode(1);
-  #  header('Location: ' . $zielUrlMitParametern);
   #sendern besteatigungsmail an gast.
   $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendmail.php';
 
@@ -140,20 +134,21 @@ if (alleHabenBesteatigt($conn, $reservierung_id)) {
   $stmt = $conn->prepare("UPDATE bestellung set status = 'besteatigt' WHERE id = :reservierung_id");
   $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
   $stmt->execute();
-
-  #senden mail für agb etc. 
-  #$file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendmail.php';
-
-
-  #$url = $file . '?' . http_build_query($params);
-
-  #$message = file_get_contents($url);
-  #senden abhol qr code
-  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendQR.php';
-
+  #beide brauchen den gleichen $parameter daher nur einmal 
   $params = [
     'bestellungsHash' => $bestellungsHash,
   ];
+  #senden mail für agb etc. 
+  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendAGB.php';
+
+
+  $url = $file . '?' . http_build_query($params);
+  $message = file_get_contents($url);
+  echo $message;
+  #senden abhol qr code
+  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendQR.php';
+
+
   $url = $file . '?' . http_build_query($params);
 
   $message = file_get_contents($url);

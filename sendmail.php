@@ -86,8 +86,7 @@ try {
     $mail->Encoding = 'base64';
     // Empfänger
     $mail->setFrom($from, 'AKS Karlsruhe');
-
-
+    
     $mail->addAddress($email); // Füge einen Empfänger hinzu
 
     // Inhalt

@@ -324,9 +324,9 @@ class Mensch
         return false;
     }
     
-    public function generateHash($hashseed)
+    public function generateHash($NumberOfBytes)
     {
-        $this->hash = hash('sha3-512', $this->name . $this->vorname . $this->gb_datum . $this->email . $hashseed, false);
+        $this->hash = bin2hex(random_bytes($NumberOfBytes));
     }
     public function writeMenschInDB($conn)
     {
