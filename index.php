@@ -56,7 +56,7 @@ if ($count_free >= 1) {
         <label for="vorname">Vorname:</label>
         <input type="text" id="vorname" name="vorname" required>
 
-        <label for="schule">Deine eigene schule:</label>
+        <label for="schule">Deine eigene Schule:</label>
         <input type="text" id="schule" name="schule" required>
 
         <label for="email">E-mail:</label>
@@ -68,7 +68,7 @@ if ($count_free >= 1) {
         </label>
         <input type="number" id="tickets" name="tickets" min="1" max="<?php echo $max_ausleihe ?>" required>
 
-        <label for="gb_datum">Geburztag:</label>
+        <label for="gb_datum">Geburtstag:</label>
         <input type="date" id="gb_datum" name="gb_datum" min="2007-01-01" max="2011-05-01" required>
 
 
@@ -85,7 +85,7 @@ if ($count_free >= 1) {
         </div>
         <div class="EinzeldAbholen">
           <input type="checkbox" id="EinzeldAbholen" name="EinzeldAbholen">
-          <label for="EinzeldAbholen">Jeder soll seine karten selbst abholen.</label>
+          <label for="EinzeldAbholen">Jeder soll seine Karten selbst abholen.</label>
         </div>
 
         <input type="submit" value="Reservieren">
@@ -99,7 +99,7 @@ if ($count_free >= 1) {
 
   <?php
 } elseif ($count_free == 0) {
-  echo "Es sind grade keine Karten vorhanden. Es gibt aber noch NUMMER Karten, die bestellt aber noch nicht abgeholt worden sind. Du kannst es also später nochmal probieren.";
+  echo "Es sind gerade keine Karten vorhanden. Es gibt aber noch NUMMER Karten, die bestellt aber noch nicht abgeholt worden sind. Du kannst es also später nochmal probieren.";
 } else {
 }
 $conn = null;
