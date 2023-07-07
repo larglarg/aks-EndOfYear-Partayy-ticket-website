@@ -350,7 +350,6 @@ class Mensch
 
     public function writeIDInMainDB($conn)
     {
-        print_r("hello writeidinmaindb".$this->id.$this->resverierungID);
         $stmt = $conn->prepare("UPDATE main SET mensch_id = :id WHERE reservierung_id = :reservierung_id AND mensch_id is NULL LIMIT 1;");
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         $stmt->bindParam(':reservierung_id', $this->resverierungID, PDO::PARAM_INT);

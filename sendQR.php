@@ -40,7 +40,7 @@ $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $Anzahl_tickets = $row['Anzahl_tickets'];
 
-if ($row['einzeld_oder_zusammen'] == 0 || $Anzahl_tickets == 1) {
+if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
     $stmt = $conn->prepare("SELECT id, hash, email FROM menschen WHERE id = :id");
     $stmt->bindParam(':id', $row['besteller_id'], PDO::PARAM_INT);
     $stmt->execute();
@@ -57,7 +57,7 @@ if ($row['einzeld_oder_zusammen'] == 0 || $Anzahl_tickets == 1) {
     ];
     $url = $file . '?' . http_build_query($params);
     $message = file_get_contents($url);
-
+    echo  $message;
     $to = $email;
     $from = "lars.handwerker@web.de";
 

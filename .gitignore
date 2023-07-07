@@ -1,3 +1,4 @@
 mailAuth.php
 includes/
 sqlAuth.php
+qrcodes/*

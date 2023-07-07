@@ -71,7 +71,7 @@ function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash,
   $url = $file . '?' . http_build_query($params);
 
   $message = file_get_contents($url);
-  echo $message;
+
 
 
 }
@@ -97,7 +97,7 @@ try {
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // echo "Connected successfully <br>";
 } catch (PDOException $e) {
-  echo "Connection failed: " . $e->getMessage();
+  #echo "Connection failed: " . $e->getMessage();
 }
 
 
@@ -144,7 +144,7 @@ if (alleHabenBesteatigt($conn, $reservierung_id)) {
 
   $url = $file . '?' . http_build_query($params);
   $message = file_get_contents($url);
-  echo $message;
+
   #senden abhol qr code
   $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendQR.php';
 
@@ -152,14 +152,21 @@ if (alleHabenBesteatigt($conn, $reservierung_id)) {
   $url = $file . '?' . http_build_query($params);
 
   $message = file_get_contents($url);
-  echo $message;
+echo $message;
 }
 
 
 ?>
-Falls eine passende reservierung gefunden worden ist wurde diese bestätigt.
+<body>
+    <div class="container">
+        <h1>E-mail Bestätigt.</h1>
+        <p>Falls eine passende reservierung gefunden worden ist wurde diese bestätigt.<br>
+        Solltest du weitere begleitungen hinzugefügt haben wurden diese in die datenbank übernommen und die Besteatigungsmails wurden versedet
 Sobald alle karten besteatigt sind oder stoniert sind die zu dieser bestellung gehören werden die karten verschickt.
-
+        </p>
+        <!-- Hier können Sie den gewünschten Inhalt einfügen, der die erfolgreiche Versendung bestätigt. -->
+    </div>
+</body>
 <?php
 
 
@@ -178,16 +185,34 @@ if ($number_of_tickets != 1 && $istBestller) {
         newMensch($conn, $NumberOfBytes, $gast1, $_POST['schule1'], $bestellungsHash, $i);
         break;
       case 2:
-        echo "<h3>Zweite begleitung</h3>";
-        BegleitungForm($i);
+        $params = array(
+          'vorname' => $_POST['vorname2'],
+          'name' => $_POST['name2'],
+          'gb_datum' => $_POST['gb_datum2'],
+          'email' => $_POST['email2'],
+        );
+        $gast2 = new Mensch($params);
+        newMensch($conn, $NumberOfBytes, $gast2, $_POST['schule1'], $bestellungsHash, $i);
         break;
       case 3:
-        echo "<h3>Dritte begleitung</h3>";
-        BegleitungForm($i);
+        $params = array(
+          'vorname' => $_POST['vorname3'],
+          'name' => $_POST['name3'],
+          'gb_datum' => $_POST['gb_datum3'],
+          'email' => $_POST['email3'],
+        );
+        $gast3 = new Mensch($params);
+        newMensch($conn, $NumberOfBytes, $gast3, $_POST['schule3'], $bestellungsHash, $i);
         break;
       case 4:
-        echo "<h3>Vierte begleitung</h3>";
-        BegleitungForm($i);
+        $params = array(
+          'vorname' => $_POST['vorname4'],
+          'name' => $_POST['name4'],
+          'gb_datum' => $_POST['gb_datum4'],
+          'email' => $_POST['email4'],
+        );
+        $gast4 = new Mensch($params);
+        newMensch($conn, $NumberOfBytes, $gast4, $_POST['schule4'], $bestellungsHash, $i);
         break;
     }
 

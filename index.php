@@ -16,7 +16,7 @@ try {
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // echo "Connected successfully <br>";
 } catch (PDOException $e) {
-  echo "Connection failed: " . $e->getMessage();
+  #echo "Connection failed: " . $e->getMessage();
 }
 
 $sql = "SELECT COUNT(*) AS free FROM main WHERE status = 'frei';";
@@ -40,9 +40,7 @@ if ($count_free >= 1) {
   ?>
 
   <body>
-    <?php
-      echo 'PHP version: ' . phpversion();
-    ?>
+
     <div class="container">
       <h1>Ticket-Reservierung</h1>
       <h3>Es sind noch
