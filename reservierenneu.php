@@ -29,9 +29,7 @@ function setBestellungsHashSingel($conn, $besteller, $reservierung_id)
     return $Bestlleungs_hash;
 }
 
-include 'Mensch.php';
-include 'sqlAuth.php';
-include 'hashSeed.php';
+include 'statics.php';
 $number_of_tickets = $_POST['tickets'];
 $agb_check = $_POST['agb'];
 $einwilligung_bild_ton = $_POST['einwilligung'];

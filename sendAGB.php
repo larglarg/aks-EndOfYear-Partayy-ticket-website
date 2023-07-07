@@ -1,9 +1,8 @@
 <?php
 // Retrieve the passed variables from the URL parameters
-include 'sqlAuth.php';
-$bestellungsHash = $_GET['bestellungsHash'];
-include 'mailAuth.php';
 
+$bestellungsHash = $_GET['bestellungsHash'];
+include 'statics.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;

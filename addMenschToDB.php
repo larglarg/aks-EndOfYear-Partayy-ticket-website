@@ -12,7 +12,7 @@ $getmesage = '/ReservierungfürdieAKSEndOfYreaarPartaayTicket.php?' . http_build
 
 $id = $_GET['id'];
 
-include 'sqlAuth.php';
+include 'statics.php';
 
 
 try {

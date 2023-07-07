@@ -38,7 +38,7 @@ function sendMail($mailer, $sender_name, $recipient, $subject, $message, $isHTML
 // Retrieve the passed variables from the URL parameters
 $menschId;
 $message;
-include 'sqlAuth.php';
+include 'statics.php';
 $personHash = $_GET['personHash'];
 $bestellungsHash = $_GET['bestellungsHash'];
 

@@ -1,8 +1,8 @@
  <?php
 
- include 'sqlAuth.php';
+
  include 'Mensch.php';
- include 'hashSeed.php';
+ include 'statics.php';
 
   $params = array(
     'name' => 'name',

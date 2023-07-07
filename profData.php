@@ -32,7 +32,7 @@
 
 $personHash = $_GET['personhash'];
 $bestellungsHash = $_GET['bestellungsHash'];
-include "sqlAuth.php";
+include 'statics.php';
 try {
     $conn = new PDO("mysql:host=$servername;dbname=aks-EndOfYear-Partayy-tickets", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

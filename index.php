@@ -8,7 +8,7 @@
 </head>
 
 <?php
-include 'sqlAuth.php';
+include 'statics.php';
 $max_ausleihe = 5;
 #git ls-files | %{ Get-Content -Path $_ } | measure
 try {
