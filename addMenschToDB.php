@@ -57,7 +57,7 @@ if ($result->rowCount() == 1) {
     $row = $result->fetch(PDO::FETCH_ASSOC);
     $bestellungsId = $row["id"];
 } else {
-    echo "<h1>Es gab einen unbekanntenfehle bitte wennden sie sich an Support@mail.de</h1>";
+    echo "<h1>Es gab einen unbekannten Fehler. Bitte wennden Sie sich an Support@mail.de</h1>";
     exit();
 }
 

@@ -26,7 +26,7 @@ class Mensch
         $stmt->bindParam(':hash', $personHash, PDO::PARAM_STR);
         $stmt->execute();
         if ($stmt->rowCount() != 1) {
-            echo "person hash zeigt auf mehr als eine person!";
+            echo "personHash zeigt auf mehr als eine person!";
 
             return false;
         }
@@ -50,7 +50,7 @@ class Mensch
         $stmt->bindParam(':hash', $bestellungsHash, PDO::PARAM_STR);
         $stmt->execute();
         if ($stmt->rowCount() != 1) {
-            echo "bestellungshash zeigt auf mehr als eine bestellung!";
+            echo "bestellungsHash zeigt auf mehr als eine bestellung!";
 
             return false;
         }

@@ -63,7 +63,7 @@ if($menschID == $row['besteller_id'] && !$row['besteller_storniert']){
 }elseif($menschID == $row['gast4_id'] && !$row['gast4_storniert']){
     $flag = 1;
 }else{
-    echo "Die bestellung wurde stoniert!!!";
+    echo "Die Bestellung wurde storniert!";
     exit();
 }
 
@@ -93,7 +93,7 @@ if($flag == 1){
 <body>
 <div class="container">
     <h1>
-        Hey, bitte Überprüfe bitte einmal deine daten:
+        Hey, bitte überprüfe noch einmal deine Daten:
     </h1>
 
     <form action="besteatiegen.php" method="post">
@@ -103,13 +103,13 @@ if($flag == 1){
         <label for="Vorname">Vorname:</label>
         <input type="text" id="vorname" name="vorname" value="<?php echo $Menscharray['vorname'] ?>" required>
 
-        <label for="schule">Deine eigene schule:</label>
+        <label for="schule">Deine eigene Schule:</label>
         <input type="text" id="schule" name="schule" value="<?php echo $schulname?>" required>
 
 
         <input type="hidden" id="personHash" name="personHash" value="<?php echo $personHash ?>">
         <input type="hidden" id="bestellungsHash" name="bestellungsHash" value="<?php echo $bestellungsHash ?>">
-        <label for="date">Geburztag:</label>
+        <label for="date">Geburtstag:</label>
         <input type="date" id="gb_datum" name="gb_datum" value="<?php echo $Menscharray['gb_datum'] ?>" required>
 
 
@@ -141,7 +141,7 @@ if($flag == 1){
     
       <h1>Infos für die weiteren Tickets</h1>
       <p>
-      <h3>Jede person muss sein eigene Mail bestätigen und den AGBs zustimmen.</h3>
+      <h3>Jede Person muss seine eigene E-mailadresse bestätigen und den AGBs zustimmen.</h3>
   
   
       </p>
@@ -149,19 +149,19 @@ if($flag == 1){
         for ($i = 1; $i < $number_of_tickets; $i++) {
           switch ($i) {
             case 1:
-              echo "<h3>Erste begleitung</h3>";
+              echo "<h3>Erste Begleitung</h3>";
               BegleitungForm($i);
               break;
             case 2:
-              echo "<h3>Zweite begleitung</h3>";
+              echo "<h3>Zweite Begleitung</h3>";
               BegleitungForm($i);
               break;
             case 3:
-              echo "<h3>Dritte begleitung</h3>";
+              echo "<h3>Dritte Begleitung</h3>";
               BegleitungForm($i);
               break;
             case 4:
-              echo "<h3>Vierte begleitung</h3>";
+              echo "<h3>Vierte Begleitung</h3>";
               BegleitungForm($i);
               break;
           }

@@ -35,7 +35,7 @@ $stmt = $conn->prepare("SELECT id, hash, email FROM menschen WHERE hash = :perso
 $stmt->bindParam(':personHash', $personHash, PDO::PARAM_STR);
 $stmt->execute();
 if ($stmt->rowCount() != 1) {
-    echo "Der mensch exestiert nicht oder mehr als ein mal";
+    echo "Der Mensch existiert nicht oder mehr als ein Mal";
     exit();
 }
 
@@ -49,11 +49,11 @@ $stmt->bindParam(':menschid', $menschId, PDO::PARAM_INT);
 $stmt->execute();
 
 if ($stmt->rowCount() == 0) {
-    echo "Die bestellung exestiert nicht null";
+    echo "Die Bestellung existiert nicht";
     exit();
 }
 if ($stmt->rowCount() > 1) {
-    echo "Die bestellung exestiert nicht mehr als eins";
+    echo "Die Bestellung existiert nicht mehr als eins"; // Was willst du damit sagen???
     exit();
 }
 $from = "lars.handwerker@web.de";
