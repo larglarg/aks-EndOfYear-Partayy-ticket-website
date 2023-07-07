@@ -48,9 +48,9 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
     $email = $mensch['email'];
     $hash = $mensch['hash'];
     $QRPath = getqrcodepath($NumberOfBytes);
-    QRcode::png("http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
+    QRcode::png($URL."profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
     #get contett of mail 
-    $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/Send_QE_code.php';
+    $file = $URL.'Send_QE_code.php';
     $params = [
         'bestellungsHash' => $bestellungsHash,
         'path' => $QRPath
@@ -104,9 +104,9 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
         $email = $mensch['email'];
         $hash = $mensch['hash'];
         $QRPath = getqrcodepath($NumberOfBytes);
-        QRcode::png("http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
+        QRcode::png($URL."profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
 
-        $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/Send_QE_code.php';
+        $file = $URL.'Send_QE_code.php';
         $params = [
             'bestellungsHash' => $bestellungsHash,
             'path' => $QRPath

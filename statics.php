@@ -1,4 +1,7 @@
 <?php
+#---Global---
+$URL = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/';
+
 #---SQL---
 
 $servername = "";

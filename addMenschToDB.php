@@ -46,8 +46,7 @@ foreach ($Nummberarray as $i) {
     $wannErstelleHash = $wannErstelleHash . $i;
 }
 
-$key = strrev($wannErstelleHash) . $name . $vorname . $schule . $gb_datum . $email . $hashseed;
-$bestellungsHash = hash('sha3-512', $key, false);
+$bestellungsHash = bin2hex(random_bytes($NumberOfBytes));
 $sql = "UPDATE bestellung SET hash = '" . $bestellungsHash . "' WHERE besteller_id = " . $idBestellerMenschen . ";";
 $conn->query($sql);
 #weiterleiten auf mail seite
@@ -68,7 +67,7 @@ $params = array(
     'bestellungsHash' => $bestellungsHash,
     'email' => $email,
 );
-$sendmailURL = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/sendmail.php?' . http_build_query($params); // Mach nen Funktion Call draus kein API CALL
+$sendmailURL = $URL.'sendmail.php?' . http_build_query($params); // Mach nen Funktion Call draus kein API CALL
 $response = file_get_contents($sendmailURL);
 echo $response;
 ?>

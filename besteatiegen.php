@@ -16,7 +16,7 @@ function alleHabenBesteatigt($conn, $reservierung_id)
   }
 
 }
-function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash, $i)
+function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash, $i, $URL)
 {
 
   $problemStatus = $mensch->problemMitInfos($conn);
@@ -61,7 +61,7 @@ function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash,
   $mensch->idInBestellung($conn, $i);
   $mensch->setSchulIdByName($conn, $schulname);
   #sendern besteatigungsmail an gast.
-  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendmail.php';
+  $file = $URL.'sendmail.php';
 
   $params = [
     'personHash' => $mensch->getHash(),
@@ -139,20 +139,19 @@ if (alleHabenBesteatigt($conn, $reservierung_id)) {
     'bestellungsHash' => $bestellungsHash,
   ];
   #senden mail für agb etc. 
-  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendAGB.php';
+  $file = $URL.'sendAGB.php';
 
 
   $url = $file . '?' . http_build_query($params);
   $message = file_get_contents($url);
 
   #senden abhol qr code
-  $file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/sendQR.php';
+  $file = $URL.'sendQR.php';
 
 
   $url = $file . '?' . http_build_query($params);
 
   $message = file_get_contents($url);
-echo $message;
 }
 
 
@@ -182,7 +181,7 @@ if ($number_of_tickets != 1 && $istBestller) {
           'email' => $_POST['email1'],
         );
         $gast1 = new Mensch($params);
-        newMensch($conn, $NumberOfBytes, $gast1, $_POST['schule1'], $bestellungsHash, $i);
+        newMensch($conn, $NumberOfBytes, $gast1, $_POST['schule1'], $bestellungsHash, $i, $URL);
         break;
       case 2:
         $params = array(
@@ -192,7 +191,7 @@ if ($number_of_tickets != 1 && $istBestller) {
           'email' => $_POST['email2'],
         );
         $gast2 = new Mensch($params);
-        newMensch($conn, $NumberOfBytes, $gast2, $_POST['schule1'], $bestellungsHash, $i);
+        newMensch($conn, $NumberOfBytes, $gast2, $_POST['schule1'], $bestellungsHash, $i, $URL);
         break;
       case 3:
         $params = array(
@@ -202,7 +201,7 @@ if ($number_of_tickets != 1 && $istBestller) {
           'email' => $_POST['email3'],
         );
         $gast3 = new Mensch($params);
-        newMensch($conn, $NumberOfBytes, $gast3, $_POST['schule3'], $bestellungsHash, $i);
+        newMensch($conn, $NumberOfBytes, $gast3, $_POST['schule3'], $bestellungsHash, $i, $URL);
         break;
       case 4:
         $params = array(
@@ -212,7 +211,7 @@ if ($number_of_tickets != 1 && $istBestller) {
           'email' => $_POST['email4'],
         );
         $gast4 = new Mensch($params);
-        newMensch($conn, $NumberOfBytes, $gast4, $_POST['schule4'], $bestellungsHash, $i);
+        newMensch($conn, $NumberOfBytes, $gast4, $_POST['schule4'], $bestellungsHash, $i, $URL);
         break;
     }
 

@@ -14,14 +14,14 @@ function wannerstelltToChar($input /*2023-06-25 08:50:05*/)
     $date = explode("-", $datetime[1]);
     return implode($time) . implode($date);
 }
-function setBestellungsHashSingel($conn, $besteller, $reservierung_id)
+function setBestellungsHashSingel($conn, $besteller, $reservierung_id, $NumberOfBytes)
 {
     $stmt = $conn->prepare("SELECT id, wann_erstellt FROM bestellung WHERE id = :reservierung_id");
     $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $wannerstelltchar = wannerstelltToChar($row['wann_erstellt']);
-    $Bestlleungs_hash = hash('sha3-512', $besteller->getHash() . $wannerstelltchar, false);
+
+    $Bestlleungs_hash = bin2hex(random_bytes($NumberOfBytes));
     $stmt = $conn->prepare("UPDATE bestellung set hash = :bestellungs_hash WHERE id = :reservierung_id");
     $stmt->bindParam(':bestellungs_hash', $Bestlleungs_hash, PDO::PARAM_STR);
     $stmt->bindParam(':reservierung_id', $reservierung_id, PDO::PARAM_INT);

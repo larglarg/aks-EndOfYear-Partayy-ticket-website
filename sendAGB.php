@@ -52,7 +52,7 @@ if ($row['gast4_id'] != NULL) {
 
 $from = "lars.handwerker@web.de";
 #getMSG
-$file = 'http://localhost/aks-EndOfYear-Partayy-ticket-website/aks-EndOfYear-Partayy-ticket-website/ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php';
+$file = $URL.'ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php';
 
 $params = [
     'bestellungsHash' => $bestellungsHash
