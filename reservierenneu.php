@@ -28,7 +28,7 @@ function setBestellungsHashSingel($conn, $besteller, $reservierung_id, $NumberOf
     $stmt->execute();
     return $Bestlleungs_hash;
 }
-
+include 'Mensch.php';
 include 'statics.php';
 $number_of_tickets = $_POST['tickets'];
 $agb_check = $_POST['agb'];

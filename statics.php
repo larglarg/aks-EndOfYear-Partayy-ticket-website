@@ -23,7 +23,7 @@ $smtpPort = '';
 #hashs
 
 $NumberOfBytes = 64;
-
+$hashSeedForPW = "";
 
 # While Developing 
 include 'mailAuth.php';

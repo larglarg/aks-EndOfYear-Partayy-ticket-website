@@ -10,9 +10,7 @@ function getqrcodepath($NumberOfBytes)
 // Retrieve the passed variables from the URL parameters
 $bestellungsHash = $_GET['bestellungsHash'];
 
-include 'sqlAuth.php';
-include 'mailAuth.php';
-include 'hashSeed.php';
+include "statics.php";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
