@@ -29,4 +29,4 @@ $hashSeedForPW = "";
 include 'mailAuth.php';
 include 'sqlAuth.php';
 include 'hashSeed.php';
-?>
+?> 
