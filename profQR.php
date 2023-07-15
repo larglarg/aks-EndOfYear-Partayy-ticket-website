@@ -10,13 +10,11 @@ function UpdateStatusAbgeholt($conn, $bestellungsHash, $bestellungsID)
 }
 
 include "statics.php";
-$bestellungsHash = $_POST['bestellungsHash'];
-$personHash = $_POST['hash'];
-$password;
-if ($_POST['password'] != NULL) {
-    $password = $_POST['password'];
-
-
+$bestellungsHash = $_GET['bestellungsHash'];
+$personHash = $_GET['hash'];
+$Localpassword;
+if ($_GET['password'] != NULL) {
+    $Localpassword = $_GET['password'];
 }
 
 try {
@@ -27,8 +25,8 @@ try {
     exit();
 }
 
-if ($password != NULL) {
-    $PwHash = hash("sha3-256", $password . $hashSeedForPW);
+if ($Localpassword != NULL) {
+    $PwHash = hash("sha3-256", $Localpassword . $hashSeedForPW);
     $stmt = $conn->prepare('SELECT PwHash FROM password WHERE PwHash = :PwHash;');
     $stmt->bindParam(':PwHash', $PwHash, PDO::PARAM_STR);
     $stmt->execute();
@@ -37,16 +35,16 @@ if ($password != NULL) {
 
     } else {
 
-        $stmt = $conn->prepare("SELECT id, besteller_id, status, hash, einzeld_oder_zusammen WHERE hash = :bestellungsHash");
+        $stmt = $conn->prepare("SELECT id, besteller_id, status, hash, einzeld_oder_zusammen FROM bestellung WHERE hash = :bestellungsHash");
         $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row['status' != 'besteatigt']) {
+        if ($row['status'] != 'besteatigt') {
 
             echo "Die karten sind entweder nicht fertig reserviert, abgelaufen oder schon abheolt worden.";
         } else {
             #TODO->Einzeld oder zusammen ? 
-
+            # button mit dem man den verkauf besteatiegen muss!?
             #TODO->send mail mit pdf an Ausgabestelle.
             UpdateStatusAbgeholt($conn, $bestellungsHash, $row['id']);
             echo "Die karte wurde als abgeholt markiert und versendet.";
@@ -64,7 +62,7 @@ if ($password != NULL) {
       <h1>Ticket-Ausgabe</h1>
       <h3>Bitte gib das password ein</h3>
 
-      <form action="profQR.php" method="post">
+      <form action="profQR.php" method="get">
         <label for="password">Geburztag:</label>
         <input type="password" id="password" name="password" required>
         <input type="hidden" id="bestellungsHash" name="bestellungsHash" value="<?php echo $bestellungsHash ?>" hidden>

@@ -79,8 +79,7 @@ function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash,
 
 
 
-include 'hashSeed.php';
-include 'sqlAuth.php';
+include "statics.php";
 $personHash = $_POST['personHash'];
 $bestellungsHash = $_POST['bestellungsHash'];
 include 'Mensch.php';

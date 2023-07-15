@@ -1,7 +1,7 @@
--- Datenbank erstellen
+-- Datenbank `aks-endofyear-partayy-tickets`
 CREATE DATABASE `aks-EndOfYear-Partayy-tickets`;
 
--- Tabelle 'menschen' erstellen
+-- Tabelle 'menschen' erstelle`aks-endofyear-partayy-tickets`n
 USE `aks-EndOfYear-Partayy-tickets`;
 CREATE TABLE `menschen` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -14,25 +14,25 @@ CREATE TABLE `menschen` (
   `hash` VARCHAR(1000)
 );
 
--- Tabelle 'schulen' erstellen
+-- Tabelle 'schulen' erstellemainn
 CREATE TABLE `schulen` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(100),
   `mks` VARCHAR(100)
 );
 
--- Tabelle 'bestellung' erstellen
+-- Tabelle 'bestellung' erstellen`aks-einformation_schemando`aks-endofyear-partayy-tickets`fyear-partayy-tickets`bestellung`aks-endofyear-partayy-tickets`bestellung
 CREATE TABLE `bestellung` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `Anzahl_tickets` INT,
   `besteller_id` INT,
-  `gast1_id` INT,-- Warum nicht eine Gast-Tabelle machen und auf die Bestellung Referenzen 
-  `gast2_id` INT,-- Die Limits sind besser im Code zu defininieren nicht in der Datenbank
+  `gast1_id` INT,
+  `gast2_id` INT,
   `gast3_id` INT,
   `gast4_id` INT,
   `status` ENUM('reserviert', 'besteatigt', 'gekauft', 'abgelaufen', 'storno'),
   `wann_erstellt` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `einzeld_oder_zusammen` TINYINT(1), -- WHY TINYINT(1) not Boolean?
+  `einzeld_oder_zusammen` BOOLEAN,
   `hash` VARCHAR(1000),
   `besteller_storniert` BOOLEAN,
   `gast1_storniert` BOOLEAN,
@@ -41,6 +41,10 @@ CREATE TABLE `bestellung` (
   `gast4_storniert` BOOLEAN
 );
 
+CREATE TABLE `password` (
+	`id` INT PRIMARY KEY AUTO_INCREMENT,
+	`PwHash` VARCHAR(100)
+);
 
 -- Tabelle 'main' erstellen
 CREATE TABLE `main` (
