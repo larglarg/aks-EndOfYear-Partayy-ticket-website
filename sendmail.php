@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Reservierung</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
 <?php
 
 
@@ -111,14 +120,24 @@ sendMail($mailer, 'AKS Karlsruhe', $email, 'Reservierung Karten AKS EndOfYear Pa
 ?>
 
 <body>
-    <div class="container">
-        <h1>Die E-Mail wurde erfolgreich verschickt.</h1>
+<div class="container">
+    <div class="content">
+      <div class="inner-content">
+<div class="header skew">
+  <h1>AKS EndOfYear-Partayy</h1>
+  <h3>Die E-Mail wurde erfolgreich verschickt.</h3>
+</div>
         <p>Nun musst du deine E-Mail bestätiegen. <br>
             Danach erhälst du eine weiter mail mit dem qr code zum abholen der Karten und einer einverständinsserklärung
             die von deinen erlern gelesen und bestätigt werden muss.
         </p>
         <!-- Hier können Sie den gewünschten Inhalt einfügen, der die erfolgreiche Versendung bestätigt. -->
     </div>
+    </div>
+</div>
+<?php
+include 'footer.php';
+?>
 </body>
 
 

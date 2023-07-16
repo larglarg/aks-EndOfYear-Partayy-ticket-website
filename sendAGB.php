@@ -52,7 +52,7 @@ if ($row['gast4_id'] != NULL) {
 
 $from = "lars.handwerker@web.de";
 #getMSG
-$file = $URL.'ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php';
+$file = $URL . 'ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php';
 
 $params = [
     'bestellungsHash' => $bestellungsHash
@@ -75,7 +75,7 @@ try {
     foreach ($ids as $id) {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-        $mail->addBcc($stmt->fetch(PDO::FETCH_ASSOC)['email']); 
+        $mail->addBcc($stmt->fetch(PDO::FETCH_ASSOC)['email']);
 
     }
 
@@ -90,7 +90,7 @@ try {
     $mail->Encoding = 'base64';
     // Empfänger
     $mail->setFrom($from, 'AKS Karlsruhe');
-    $mail->AddAttachment('./beispiel.pdf', $name = 'beispiel.pdf',  $encoding = 'base64', $type = 'application/pdf');
+    $mail->AddAttachment('./beispiel.pdf', $name = 'beispiel.pdf', $encoding = 'base64', $type = 'application/pdf');
     $mail->addAddress($to); // Füge einen Empfänger hinzu
     //add bcc 
     // Inhalt
@@ -105,13 +105,25 @@ try {
 
 <body>
     <div class="container">
-        <h1>Die E-Mail wurde erfolgreich verschickt.</h1>
-        <p>Nun musst du deine E-Mail bestätiegen. <br>
-            Danach erhälst du eine weiter mail mit dem qr code zum abholen der Karten und einer einverständinsserklärung
-            die von deinen erlern gelesen und bestätigt werden muss.
-        </p>
-        <!-- Hier können Sie den gewünschten Inhalt einfügen, der die erfolgreiche Versendung bestätigt. -->
+        <div class="content">
+            <div class="inner-content">
+                <div class="header skew">
+                    <h1>AKS EndOfYear-Partayy</h1>
+                    <h3>Die E-Mail wurde erfolgreich verschickt.</h3>
+                </div>
+                <p>Nun musst du deine E-Mail bestätiegen. <br>
+                    Danach erhälst du eine weiter mail mit dem qr code zum abholen der Karten und einer
+                    einverständinsserklärung
+                    die von deinen erlern gelesen und bestätigt werden muss.
+                </p>
+
+            </div>
+
+        </div>
     </div>
+    <?php
+include 'footer.php';
+?>
 </body>
 
 

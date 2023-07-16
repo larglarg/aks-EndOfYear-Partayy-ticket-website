@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Reservierung</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
 <?php
 
 
@@ -79,8 +87,7 @@ function newMensch($conn, $NumberOfBytes, $mensch, $schulname, $bestellungsHash,
 
 
 
-include 'hashSeed.php';
-include 'sqlAuth.php';
+include 'statics.php';
 $personHash = $_POST['personHash'];
 $bestellungsHash = $_POST['bestellungsHash'];
 include 'Mensch.php';
@@ -157,14 +164,25 @@ if (alleHabenBesteatigt($conn, $reservierung_id)) {
 
 ?>
 <body>
-    <div class="container">
-        <h1>E-mail Bestätigt.</h1>
+<div class="container">
+    <div class="content">
+      <div class="inner-content">
+<div class="header skew">
+  <h1>AKS EndOfYear-Partayy</h1>
+  <h3>E-mail Bestätigt.</h3>
+</div>
+
         <p>Falls eine passende reservierung gefunden worden ist wurde diese bestätigt.<br>
         Solltest du weitere begleitungen hinzugefügt haben wurden diese in die datenbank übernommen und die Besteatigungsmails wurden versedet
 Sobald alle karten besteatigt sind oder stoniert sind die zu dieser bestellung gehören werden die karten verschickt.
         </p>
         <!-- Hier können Sie den gewünschten Inhalt einfügen, der die erfolgreiche Versendung bestätigt. -->
     </div>
+    </div>
+</div>
+<?php
+include 'footer.php';
+?>
 </body>
 <?php
 
