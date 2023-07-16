@@ -1,8 +1,10 @@
+
+
 .instagram-icon {
   display: inline-block;
   width: 16px;
   height: 16px;
-  background-image: url('./ig-logo-bw.png');
+  background-image: url('aks.larglarg.com/aks/ig-logo-bw.png');
   background-repeat: repeat;
   background-size: cover;
   margin-right: 5px;
@@ -141,7 +143,7 @@ a {
 body {
   margin: 0;
   padding: 0;
-  background-image: url("background.jpg");
+  background-image: url("aks.larglarg.com/background.jpg");
   background-size: cover;
   background-position: top;
   overflow: auto;
