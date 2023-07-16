@@ -67,8 +67,7 @@ function stornieren($whitch, $conn, $bestellungsHash, $stonierer){
     }
 }
 
-include 'sqlAuth.php';
-include 'hashSeed.php';
+include 'statics.php';
 include 'Mensch.php';
 $personHash = $_GET['personhash'];
 $bestellungsHash = $_GET['bestellungsHash'];

@@ -92,6 +92,12 @@ if($flag == 1){
 
 <body>
 <div class="container">
+    <div class="content">
+      <div class="inner-content">
+<div class="header skew">
+  <h1>AKS EndOfYear-Partayy</h1>
+  <h3>Mail Besteatigung</h3>
+</div>
     <h1>
         Hey, bitte Überprüfe bitte einmal deine daten:
     </h1>
@@ -186,6 +192,11 @@ if($flag == 1){
     </form>
 
 </div>
+</div>
+</div>
+<?php
+include 'footer.php';
+?>
 </body>
 
 

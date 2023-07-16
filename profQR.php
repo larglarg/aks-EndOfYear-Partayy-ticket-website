@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Reservierung</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
 <?php
 function UpdateStatusAbgeholt($conn, $bestellungsHash, $bestellungsID)
 {
@@ -10,13 +19,26 @@ function UpdateStatusAbgeholt($conn, $bestellungsHash, $bestellungsID)
 }
 
 include "statics.php";
-$bestellungsHash = $_POST['bestellungsHash'];
-$personHash = $_POST['hash'];
-$password;
-if ($_POST['password'] != NULL) {
-    $password = $_POST['password'];
-
-
+#wenn von link aufgerufen ist es get und wenn selbst aufruf post
+if(isset($_GET['bestellungsHash'])) {
+    $bestellungsHash = $_GET['bestellungsHash'];
+}elseif (isset($_POST['bestellungsHash'])) {
+    $bestellungsHash = $_POST['bestellungsHash'];
+}else{
+    echo "fatal error bestellungsHash";
+    exit();
+}
+if(isset($_GET['hash'])) {
+    $personHash = $_GET['hash'];
+}elseif (isset($_POST['hash'])) {
+    $personHash = $_POST['hash'];
+}else{
+    echo "fatal error hash";
+    exit();
+}
+$localpassword;
+if (isset($_POST['password'])) {
+    $localpassword = $_POST['password'];
 }
 
 try {
@@ -27,8 +49,8 @@ try {
     exit();
 }
 
-if ($password != NULL) {
-    $PwHash = hash("sha3-256", $password . $hashSeedForPW);
+if ($localpassword != NULL) {
+    $PwHash = hash("sha3-256", $localpassword . $hashSeedForPW);
     $stmt = $conn->prepare('SELECT PwHash FROM password WHERE PwHash = :PwHash;');
     $stmt->bindParam(':PwHash', $PwHash, PDO::PARAM_STR);
     $stmt->execute();
@@ -61,11 +83,16 @@ if ($password != NULL) {
     ?>
 
 <div class="container">
-      <h1>Ticket-Ausgabe</h1>
+    <div class="content">
+      <div class="inner-content">
+<div class="header skew">
+  <h1>AKS EndOfYear-Partayy</h1>
+  <h3>Ticket-Ausgabe</h3>
+</div>
       <h3>Bitte gib das password ein</h3>
 
-      <form action="profQR.php" method="post">
-        <label for="password">Geburztag:</label>
+      <form action="profQR.php" method="POST">
+        <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <input type="hidden" id="bestellungsHash" name="bestellungsHash" value="<?php echo $bestellungsHash ?>" hidden>
         <input type="hidden" id="hash" name="hash" value="<?php echo $personHash ?>" hidden>
@@ -74,8 +101,11 @@ if ($password != NULL) {
         <input type="submit" value="Reservieren">
       </form>
     </div>
-<?php
+</div>
+</div>
 
+<?php
+include 'footer.php';
 
 }
 

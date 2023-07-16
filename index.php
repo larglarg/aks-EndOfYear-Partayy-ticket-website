@@ -42,7 +42,12 @@ if ($count_free >= 1) {
   <body>
 
     <div class="container">
-      <h1>Ticket-Reservierung</h1>
+    <div class="content">
+      <div class="inner-content">
+<div class="header skew">
+  <h1>AKS EndOfYear-Partayy</h1>
+  <h3>Ticket-Reservierung</h3>
+</div>
       <h3>Es sind noch
         <?php echo $count_free ?> Plätze frei
       </h3>
@@ -87,8 +92,12 @@ if ($count_free >= 1) {
         </div>
 
         <input type="submit" value="Reservieren">
-      </form>
+      </form></div>
+</div>
     </div>
+<?php
+include 'footer.php';
+?>
   </body>
 
   </html>
