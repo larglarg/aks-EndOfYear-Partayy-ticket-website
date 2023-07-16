@@ -3,7 +3,7 @@
   width: 16px;
   height: 16px;
   background-image: url('./ig-logo-bw.png');
-  /* Pfad zum Instagram-Logo */
+  background-repeat: repeat;
   background-size: cover;
   margin-right: 5px;
   vertical-align: middle;
@@ -146,6 +146,7 @@ body {
   background-position: top;
   overflow: auto;
   font-family: Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
 }
 
 .container {
@@ -168,35 +169,86 @@ body {
   max-width: 70%;
 }
 
+.header, .footer {
+  padding: 10px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  height: calc(5vh + 2vw);
+  font-family: Helvetica, Arial, sans-serif;
+}
+
 .header {
   background-color: #63007F;
   color: #fff;
   text-align: center;
-  padding: 20px;
-  transform: skewY(-8deg);
+  transform: skewY(6deg);
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  height: calc(5vh + 2vw);
   z-index: 999;
-  font-family: Helvetica, Arial, sans-serif;
+}
+
+.header h1 {
+  font-size: 3vh;
+}
+
+.header h3 {
+  font-size: 2vh;
 }
 
 .footer {
   background-color: #63007F;
   color: #fff;
   text-align: center;
-  padding: 20px;
-  transform: skewY(-8deg);
+/*  transform: skewY(6deg); #TODO->weis noch nicht ob ich das will oder nicht 
+*/ 
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100vw;
-  height: calc(5vh + 2vw);
-  font-family: Helvetica, Arial, sans-serif;
+  z-index: 999;
 }
 
-.skew {
-  transform: skewY(8deg);
+.footer p {
+  font-size: 2vh;
 }
+
+/* Gemeinsame Stile für Desktop und Mobile */
+/* ... (vorheriger CSS-Code bleibt unverändert) ... */
+
+/* Stile für Desktop und Mobile */
+.header, .footer {
+  height: auto;
+  padding: 10px;
+}
+
+.header h1, .header h3, .footer p, .footer h1, .footer h3 {
+  margin: 0;
+}
+
+/* Stile für mobile Geräte */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .content {
+    max-width: 100%;
+    margin-top: 10vh;
+    padding: 1cm;
+    margin-bottom: 10vh;
+  }
+
+  .infos {
+    font-size: 14px;
+  }
+  /* Füge weitere spezifische Stile für mobile Geräte hinzu, falls benötigt */
+  
+  .header {
+    padding-bottom: 20px;
+  }
+}
+
+

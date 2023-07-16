@@ -1,7 +1,7 @@
 <?php
 ?>
 <div class="footer skew">
-  <h1>Impressum</h1>
+  <h3>Impressum</h3>
 </div>
 <?php
 ?>

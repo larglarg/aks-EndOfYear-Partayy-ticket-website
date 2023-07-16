@@ -59,7 +59,7 @@ if ($localpassword != NULL) {
 
     } else {
 
-        $stmt = $conn->prepare("SELECT id, besteller_id, status, hash, einzeld_oder_zusammen WHERE hash = :bestellungsHash");
+        $stmt = $conn->prepare("SELECT id, besteller_id, status, hash, einzeld_oder_zusammen FROM bestellung WHERE hash = :bestellungsHash");
         $stmt->bindParam(':bestellungsHash', $bestellungsHash, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
