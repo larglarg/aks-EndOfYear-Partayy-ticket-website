@@ -1,8 +1,8 @@
 <?php
 
-function getqrcodepath($NumberOfBytes)
+function getqrcodepath($NumberOfBytes, $URL)
 {
-    $QRPath = "./qrcodes/";
+    $QRPath = $URL."/qrcodes/";
     $filename = "qrcode" .bin2hex(random_bytes($NumberOfBytes)).".png";
     return $QRPath . $filename;
 }
@@ -45,7 +45,7 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
     $mensch = $stmt->fetch(PDO::FETCH_ASSOC);
     $email = $mensch['email'];
     $hash = $mensch['hash'];
-    $QRPath = getqrcodepath($NumberOfBytes);
+    $QRPath = getqrcodepath($NumberOfBytes, $URL);
     QRcode::png($URL."profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
     #get contett of mail 
     $file = $URL.'Send_QE_code.php';
@@ -54,9 +54,8 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
         'bestellungsHash' => $bestellungsHash,
         'path' => $QRPath
     ];
-    $url = $file . '?' . http_build_query($params);
-    $message = file_get_contents($url);
-    echo  $message;
+    $UrlFromFile = $file . '?' . http_build_query($params);
+    $message = file_get_contents($UrlFromFile);
     $to = $email;
     $from = "lars.handwerker@web.de";
 
@@ -102,7 +101,7 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
         $mensch = $stmt->fetch(PDO::FETCH_ASSOC);
         $email = $mensch['email'];
         $hash = $mensch['hash'];
-        $QRPath = getqrcodepath($NumberOfBytes);
+        $QRPath = getqrcodepath($NumberOfBytes, $URL);
         QRcode::png($URL."profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
 
         $file = $URL.'Send_QE_code.php';
@@ -110,6 +109,7 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
             'bestellungsHash' => $bestellungsHash,
             'path' => $QRPath
         ];
+        echo $QRPath;
         $url = $file . '?' . http_build_query($params);
         $message = file_get_contents($url);
 

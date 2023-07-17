@@ -3,6 +3,10 @@
 $QRpath = $_GET['path'];
 $bestellungsHash = $_GET['bestellungsHash'];
 
+// Additional text to be included in the email
+$additionalText = "Bitte beachten Sie, dass Sie mit dem QR-Code innerhalb der nächsten 5 Tage die Karten im Anne Frank Haus in Karlsruhe abholen und bezahlen können. Vergessen Sie nicht, den unterschriebenen Mutterzettel mitzubringen.";
+
+
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +51,7 @@ $bestellungsHash = $_GET['bestellungsHash'];
                     <p>Mit freundlichen Grüßen,<br>
                         Ihr AKS Team</p>
                 </div>
+
 
             </div>
         </div>
