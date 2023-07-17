@@ -62,14 +62,10 @@
                     <li>Besuchte Schule</li>
                     <li>E-Mail-Adresse</li>
                 </ul>
-                <p>Die reservierten Tickets können entweder an der Abendkasse bezahlt oder während der Woche (Mo-Fr) zwischen
-                    den angegebenen Uhrzeiten beim Anne Frank Haus in Karlsruhe abgeholt werden. Bitte geben Sie bei der
-                    Reservierung an, welche Option Sie wählen möchten.</p>
+                <p>Die reservierten Tickets werden an der Abendkasse bezahlt.</p>
                 <p>Jeder kann maximal 5 Tickets bestellen (sich selbst und 4 Begleitpersonen).</p>
                 <p>Nach Bestätigung der Reservierung werden die unterschriebenen Elternzettel / AGBs an jede Person
                     per E-Mail zugeschickt.</p>
-                <p>Bitte beachten Sie, dass die Tickets spätestens innerhalb von 5 Werktagen abgeholt werden müssen, falls
-                    keine Abendkasse angegeben ist. Änderungen der Reservierung sind nicht möglich.</p>
 
             </div>
 
