@@ -52,7 +52,7 @@ if ($row['gast4_id'] != NULL) {
 
 $from = "lars.handwerker@web.de";
 #getMSG
-$file = $URL . 'ReservierungfuerdieAKSEndOfYreaarPartaayTicket.php';
+$file = $URL . 'ABG-Mail.php';
 
 $params = [
     'bestellungsHash' => $bestellungsHash
@@ -90,7 +90,8 @@ try {
     $mail->Encoding = 'base64';
     // Empfänger
     $mail->setFrom($from, 'AKS Karlsruhe');
-    $mail->AddAttachment('./beispiel.pdf', $name = 'beispiel.pdf', $encoding = 'base64', $type = 'application/pdf');
+    $mail->AddAttachment('./AGBs.pdf', $name = 'AGBs.pdf', $encoding = 'base64', $type = 'application/pdf');
+    $mail->AddAttachment('./muttizettel.pdf', $name = 'muttizettel.pdf', $encoding = 'base64', $type = 'application/pdf');
     $mail->addAddress($to); // Füge einen Empfänger hinzu
     //add bcc 
     // Inhalt

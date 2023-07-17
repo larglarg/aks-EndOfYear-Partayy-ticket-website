@@ -2,7 +2,7 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  background-image: url('./ig-logo-bw.png');
+  background-image: url('saks.larglarg.com/aks/ig-logo-bw.png');
   background-repeat: repeat;
   background-size: cover;
   margin-right: 5px;
@@ -139,6 +139,7 @@ a {
 }
 
 body {
+  background-color: #000;
   margin: 0;
   padding: 0;
   background-image: url("background.jpg");
@@ -202,8 +203,6 @@ body {
   background-color: #63007F;
   color: #fff;
   text-align: center;
-/*  transform: skewY(6deg); #TODO->weis noch nicht ob ich das will oder nicht 
-*/ 
   position: fixed;
   bottom: 0;
   left: 0;
@@ -214,6 +213,15 @@ body {
 .footer p {
   font-size: 2vh;
 }
+
+/* Footer link style */
+.footer a {
+  color: #fff; /* Set the link color to white */
+  text-decoration: underline;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+/* ... (rest of the CSS code remains unchanged) ... */
 
 /* Gemeinsame Stile für Desktop und Mobile */
 /* ... (vorheriger CSS-Code bleibt unverändert) ... */
@@ -250,5 +258,3 @@ body {
     padding-bottom: 20px;
   }
 }
-
-

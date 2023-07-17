@@ -49,6 +49,7 @@ if ($row['einzeld_oder_zusammen'] == FALSE || $Anzahl_tickets == 1) {
     QRcode::png($URL."profQR.php?bestellungsHash=" . urlencode($bestellungsHash) . "&hash=" . urlencode($hash), $QRPath);
     #get contett of mail 
     $file = $URL.'Send_QE_code.php';
+    $QRPath = $URL.$QRPath;
     $params = [
         'bestellungsHash' => $bestellungsHash,
         'path' => $QRPath
